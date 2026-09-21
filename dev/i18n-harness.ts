@@ -4,7 +4,7 @@ import { ExportOptionsModal, confirmDialog } from "../src/modal";
 import { PaginationPreviewModal } from "../src/preview";
 import { DEFAULT_SETTINGS, AUTHOR_TEMPLATES, EXPORT_TYPE_LABELS } from "../src/settings";
 import { computeGeometry, buildPageSpec, renderPage, renderLongImage } from "../src/compose";
-import { buildAuthorSpec, authorBandMm, buildWatermarkSpec, loadImage } from "../src/watermark";
+import { buildAuthorSpec, authorBandMm, buildWatermarkSpec, loadImage, embedHiddenWatermark } from "../src/watermark";
 import { buildPdf, buildLongPdf } from "../src/output";
 import { mmToPx } from "../src/utils";
 import { locale, t, translate, detectLocale } from "../src/i18n";
@@ -91,6 +91,26 @@ async function run() {
  Object.assign(plugin,{app:{workspace:{on:(_e:string,cb:any)=>{menuCallbacks.push(cb);return ()=>{}}}},loadData:async()=>({}),addSettingTab:()=>{},addRibbonIcon:(_icon:string,title:string)=>{check(title===t('长截图导出（打开设置面板）'),'Ribbon tooltip localized')},addCommand:(c:any)=>commands.push(c),registerEvent:()=>{}});
  await plugin.onload();
  check(commands.length===7,'All seven commands registered');
+ // The file picker must read only the selected PNG; no vault enumeration/read.
+ const hiddenCanvas=document.createElement('canvas');hiddenCanvas.width=120;hiddenCanvas.height=120;
+ hiddenCanvas.getContext('2d')!.fillRect(0,0,120,120);
+ check(embedHiddenWatermark(hiddenCanvas,'local verification'),'Hidden watermark fixture encoded');
+ const hiddenBlob=await new Promise<Blob>(resolve=>hiddenCanvas.toBlob(blob=>resolve(blob!),'image/png'));
+ const hiddenFile=new File([hiddenBlob],'selected.png',{type:'image/png'});
+ const originalRead=app.vault.readBinary;
+ app.vault.readBinary=()=>{throw new Error('Unexpected vault read for a selected file')};
+ await plugin.verifyHiddenWatermark(hiddenFile);
+ check((Notice as any).messages.at(-1)===t('{0}\n隐水印内容：\n{1}','selected.png','local verification'),'Selected PNG decoded without vault access');
+ const oldClick=HTMLInputElement.prototype.click;
+ HTMLInputElement.prototype.click=function(){};
+ try {
+  commands.find(c=>c.id==='verify-hidden-watermark').callback();
+  const picker=document.querySelector<HTMLInputElement>('input[type="file"][accept=".png,image/png"]')!;
+  check(picker!==null,'Hidden watermark command opens a single-file picker');
+  picker.dispatchEvent(new Event('cancel'));
+  check(!picker.isConnected,'Cancelled file picker cleaned up');
+ } finally {HTMLInputElement.prototype.click=oldClick;app.vault.readBinary=originalRead;}
+
  if(locale==='en') check(commands.every(c=>!/[\u3400-\u9fff]/.test(c.name)),'Command names localized');
  const labels:string[]=[];
  const menu={addItem:(cb:any)=>{const item={setTitle:(v:string)=>{labels.push(v);return item},setIcon:()=>item,onClick:()=>item};cb(item);return menu}};

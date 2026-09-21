@@ -50,7 +50,7 @@ Markdown 笔记 → 阅读视图渲染 → 长截图 → 分页或保留整图 �
 
 需要 Obsidian 1.4.0 或更新版本。仅支持桌面端，不支持手机和平板。
 
-1. 从[本项目发布页](https://github.com/midokarin/longshot-pdf/releases/latest)下载 `main.js`、`manifest.json` 和 `styles.css`。如果下载的是压缩包，先解压。
+1. 从[本项目发布页](https://github.com/midokarin/longshot-pdf/releases/latest)下载 `main.js`、`manifest.json` 和 `styles.css`。
 2. 在 Obsidian 仓库的 `.obsidian/plugins/` 目录下，新建 `longshot-pdf` 文件夹，将这三个文件放进去。
 3. 重启 Obsidian，在“设置 → 第三方插件”中启用 Longshot PDF。如果处于受限模式，先关闭受限模式。
 
@@ -151,3 +151,16 @@ Markdown 笔记 → 阅读视图渲染 → 长截图 → 分页或保留整图 �
 ![水印设置页：可见水印、作者信息及预览效果](docs/images/watermark-settings.png)
 
 还有一个可选的像素级隐水印功能。使用它时建议导出 PNG，JPG 压缩可能破坏隐藏信息。
+
+
+## 文件访问与隐私
+
+导出在本机完成。选择库外文件夹时，插件通过 Node.js 文件系统接口创建目标文件夹、写入导出文件；头像和水印也可以读取你指定的库外图片。同名导出文件会被覆盖。
+
+隐水印校验只读取你在文件选择框中选中的 PNG。批量导出读取所选文件夹及其子文件夹中的笔记。插件不会在后台扫描整个笔记库，也不会上传笔记；笔记里已有的远程图片链接可能在渲染时联网加载。
+
+由于支持库外导出和图片读取，安全检查工具仍可能提示“直接访问文件系统”。
+
+## 许可证与发布
+
+采用 [MIT 许可证](LICENSE)。新版发布页仅附带 `main.js`、`manifest.json` 和 `styles.css`，由 GitHub Actions 构建并生成[构建来源证明](https://docs.github.com/en/actions/how-tos/secure-your-work/use-artifact-attestations/use-artifact-attestations)。PDF 库的构建调整和验证方式见[构建说明](docs/build.md)。

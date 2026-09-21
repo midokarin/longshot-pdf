@@ -1,6 +1,6 @@
 {
 	"name": "longshot-pdf",
-	"version": "0.2.1",
+	"version": "0.2.2",
 	"description": "Obsidian 插件 Longshot PDF：把笔记的阅读视图截成长图，再分页排版到纸上导出 PDF / 图片。",
 	"private": true,
 	"scripts": {
@@ -10,14 +10,15 @@
 		"serve": "python3 -m http.server 8777",
 		"verify": "node dev/verify.mjs",
 		"check:i18n": "node dev/check-i18n.mjs",
-		"verify:i18n": "node dev/verify-i18n.mjs"
+		"verify:i18n": "node dev/verify-i18n.mjs",
+		"check:release": "node dev/check-release.mjs"
 	},
 	"devDependencies": {
-		"builtin-modules": "5.4.0",
 		"esbuild": "0.28.2",
 		"jspdf": "4.2.1",
 		"modern-screenshot": "4.7.0",
 		"playwright-core": "1.63.0",
 		"typescript": "5.9.3"
-	}
+	},
+	"license": "MIT"
 }

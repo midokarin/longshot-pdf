@@ -17,26 +17,26 @@
 }
 
 /* 预览容器：去掉 Obsidian 预览自带的页边距与行宽限制，页边距交给纸张设置来控制 */
-.longshot-offscreen .markdown-preview-view {
-	padding: 0 !important;
+.longshot-offscreen > .longshot-stage > .markdown-preview-view.markdown-rendered {
+	padding: 0;
 	--file-margins: 0px;
-	overflow: visible !important;
+	overflow: visible;
 	display: flow-root;
-	min-height: 0 !important;
-	height: auto !important;
+	min-height: 0;
+	height: auto;
 }
 
-.longshot-offscreen .markdown-preview-sizer {
-	padding: 0 !important;
-	min-height: 0 !important;
-	max-width: none !important;
-	margin-left: 0 !important;
-	margin-right: 0 !important;
+.longshot-offscreen > .longshot-stage > .markdown-preview-view > .markdown-preview-sizer.markdown-preview-section {
+	padding: 0;
+	min-height: 0;
+	max-width: none;
+	margin-left: 0;
+	margin-right: 0;
 }
 
 /* 笔记标题：主题若把内联标题隐藏了，这里强制显示，并沿用主题的排版变量 */
-.longshot-offscreen .inline-title {
-	display: block !important;
+.longshot-offscreen .markdown-preview-view.show-inline-title .inline-title {
+	display: block;
 	font-size: var(--inline-title-size, 1.8em);
 	font-weight: var(--inline-title-weight, 700);
 	font-style: var(--inline-title-style, normal);
@@ -58,13 +58,13 @@
 }
 
 /* 交互元素不该出现在长截图里 */
-.longshot-offscreen .copy-code-button,
-.longshot-offscreen .edit-block-button,
-.longshot-offscreen .markdown-embed-link,
-.longshot-offscreen .collapse-indicator,
-.longshot-offscreen .heading-collapse-indicator,
-.longshot-offscreen .markdown-preview-pusher {
-	display: none !important;
+.longshot-offscreen .markdown-preview-view .copy-code-button,
+.longshot-offscreen .markdown-preview-view .edit-block-button,
+.longshot-offscreen .markdown-preview-view .markdown-embed-link,
+.longshot-offscreen .markdown-preview-view .collapse-indicator,
+.longshot-offscreen .markdown-preview-view .heading-collapse-indicator,
+.longshot-offscreen .markdown-preview-view .markdown-preview-pusher {
+	display: none;
 }
 
 /* ─ 快速设置弹窗 ───────────────────────────────────────── */
@@ -376,7 +376,6 @@
 	max-height: min(72vh, 700px);
 	overflow-y: auto;
 	overscroll-behavior: contain;
-	scrollbar-width: thin;
 }
 
 .longshot-settings .longshot-split-preview {
@@ -671,9 +670,9 @@
 	outline-offset: 3px;
 }
 .longshot-settings .longshot-template-thumb {
-	/* 覆盖绘制器写入的固定 CSS 尺寸，让小样适应窄栏。 */
-	width: 100% !important;
-	height: auto !important;
+	/* 画布像素尺寸用于清晰度，显示尺寸由布局决定。 */
+	width: 100%;
+	height: auto;
 }
 .longshot-settings .longshot-template-grid {
 	grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));

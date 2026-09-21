@@ -965,8 +965,6 @@ export function drawAuthorThumb(
 	const dpr = Math.min(3, Math.max(1, window.devicePixelRatio || 1));
 	canvas.width = Math.round(THUMB_WIDTH_CSS * dpr);
 	canvas.height = Math.round(THUMB_HEIGHT_CSS * dpr);
-	canvas.style.width = `${THUMB_WIDTH_CSS}px`;
-	canvas.style.height = `${THUMB_HEIGHT_CSS}px`;
 
 	const ctx = canvas.getContext("2d");
 	if (!ctx) return;

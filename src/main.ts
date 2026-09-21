@@ -1,5 +1,5 @@
 import { t, listSeparator } from "./i18n";
-import { App, FuzzySuggestModal, Notice, Plugin, TFile, TFolder } from "obsidian";
+import { App, Notice, Plugin, TFile, TFolder } from "obsidian";
 import { createBlankRowFinder } from "./blankrow";
 import { collectBlocks, type BlockIndex } from "./blocks";
 import {
@@ -148,7 +148,19 @@ export default class LongshotPdfPlugin extends Plugin {
 			id: "verify-hidden-watermark",
 			name: t("读取图片里的隐水印（校验）"),
 			callback: () => {
-				new PngFileSuggest(this.app, (file) => void this.verifyHiddenWatermark(file)).open();
+				const input = document.createElement("input");
+				input.type = "file";
+				input.accept = ".png,image/png";
+				input.hidden = true;
+				input.setAttribute("aria-label", t("选择要校验的 PNG 图片…"));
+				input.addEventListener("change", () => {
+					const file = input.files?.[0];
+					input.remove();
+					if (file) void this.verifyHiddenWatermark(file);
+				}, { once: true });
+				input.addEventListener("cancel", () => input.remove(), { once: true });
+				document.body.appendChild(input);
+				input.click();
 			},
 		});
 
@@ -444,9 +456,11 @@ export default class LongshotPdfPlugin extends Plugin {
 	}
 
 	/** 读取 PNG 里的隐水印，用于校验导出结果 */
-	async verifyHiddenWatermark(file: TFile): Promise<void> {
+	async verifyHiddenWatermark(file: TFile | File): Promise<void> {
 		try {
-			const bytes = await this.app.vault.readBinary(file);
+			const bytes = file instanceof TFile
+				? await this.app.vault.readBinary(file)
+				: await file.arrayBuffer();
 			const image = await blobToImage(new Blob([bytes]));
 			const canvas = document.createElement("canvas");
 			canvas.width = image.naturalWidth;
@@ -772,24 +786,4 @@ function blobToImage(blob: Blob): Promise<HTMLImageElement> {
 		};
 		image.src = url;
 	});
-}
-
-/** 选一张 PNG 来读隐水印 */
-class PngFileSuggest extends FuzzySuggestModal<TFile> {
-	constructor(app: App, private readonly onPick: (file: TFile) => void) {
-		super(app);
-		this.setPlaceholder(t("选择要校验的 PNG 图片…"));
-	}
-
-	getItems(): TFile[] {
-		return this.app.vault.getFiles().filter((file) => file.extension.toLowerCase() === "png");
-	}
-
-	getItemText(file: TFile): string {
-		return file.path;
-	}
-
-	onChooseItem(file: TFile): void {
-		this.onPick(file);
-	}
 }

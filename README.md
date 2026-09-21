@@ -50,7 +50,7 @@ For Word or ePub, consider Pandoc. For PDF links, bookmarks and merging several 
 
 Requires Obsidian 1.4.0 or later. Desktop only; phones and tablets are not supported.
 
-1. Download `main.js`, `manifest.json` and `styles.css` from the [latest release](https://github.com/midokarin/longshot-pdf/releases/latest). If you download the ZIP, extract it first.
+1. Download `main.js`, `manifest.json` and `styles.css` from the [latest release](https://github.com/midokarin/longshot-pdf/releases/latest).
 2. Create a `longshot-pdf` folder inside your vault’s `.obsidian/plugins/` directory and place the three files in it.
 3. Restart Obsidian and enable Longshot PDF under **Settings → Community plugins**. Turn off Restricted mode first if it is enabled.
 
@@ -151,3 +151,16 @@ Watermarks and signatures have separate switches. Signatures appear below the co
 ![Visible watermark and author signature settings with previews, shown in Chinese](docs/images/watermark-settings.png)
 
 An optional pixel-level hidden watermark is also available. Use PNG when you need it: JPG compression can damage the hidden data.
+
+
+## File access and privacy
+
+Exports are processed locally. Saving outside the vault uses Node.js filesystem access to create the selected output folder and write exported files. Avatar and watermark images can also be read from paths you choose outside the vault. Existing files with the same export name are overwritten.
+
+Hidden watermark verification reads only the PNG you select in the file picker. Batch export reads notes within the folder you choose, including subfolders. The plugin does not scan the whole vault in the background or upload notes. Remote images already linked in a note may be fetched while rendering it.
+
+Security scanners may flag direct filesystem access because of the optional outside-vault features described above.
+
+## License and releases
+
+[MIT License](LICENSE). New releases attach only `main.js`, `manifest.json` and `styles.css`. GitHub Actions builds these files and generates [artifact attestations](https://docs.github.com/en/actions/how-tos/secure-your-work/use-artifact-attestations/use-artifact-attestations) so their origin can be verified. See [build notes](docs/build.md) for the local PDF-library adaptation and verification commands.

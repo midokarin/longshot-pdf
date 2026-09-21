@@ -1,12 +1,13 @@
 // Check actual PDF page boxes and image placement, including asymmetric margins.
 import { build } from 'esbuild';
+import { localPdfPlugin } from '../build/jspdf-local.mjs';
 import { chromium } from 'playwright-core';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { inflateSync } from 'node:zlib';
 import assert from 'node:assert/strict';
-const bundle = await build({stdin:{contents:'export { buildLongPdf } from "./src/output";',resolveDir:process.cwd()},bundle:true,write:false,format:'iife',globalName:'pdfTest',alias:{obsidian:'./dev/obsidian-stub.ts'}});
+const bundle = await build({plugins:[localPdfPlugin()],stdin:{contents:'export { buildLongPdf } from "./src/output";',resolveDir:process.cwd()},bundle:true,write:false,format:'iife',globalName:'pdfTest',alias:{obsidian:'./dev/obsidian-stub.ts'}});
 const cache=path.join(os.homedir(),'Library/Caches/ms-playwright');
 const executablePath=fs.readdirSync(cache).filter(n=>n.startsWith('chromium-')).sort().reverse().map(n=>path.join(cache,n,'chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing')).find(p=>fs.existsSync(p));
 const browser=await chromium.launch({executablePath});

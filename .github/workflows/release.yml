@@ -1,0 +1,44 @@
+name: Build and publish plugin
+on:
+  push:
+    tags:
+      - '*'
+permissions:
+  contents: read
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+      artifact-metadata: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Check release version
+        run: node -e 'const m=require("./manifest.json"); if(m.version!==process.env.GITHUB_REF_NAME) throw Error("Tag must match manifest version")'
+      - run: npm run build
+      - run: npm run check:i18n
+      - run: npm run check:release
+      - name: Verify reproducible build
+        run: |
+          cp main.js "$RUNNER_TEMP/main-first.js"
+          npm run build
+          cmp main.js "$RUNNER_TEMP/main-first.js"
+      - name: Attest installation files
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4
+        with:
+          subject-path: |
+            main.js
+            manifest.json
+            styles.css
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: gh release create "$RELEASE_TAG" main.js manifest.json styles.css --verify-tag --title "Longshot PDF $RELEASE_TAG" --notes-file docs/release-notes.md --latest
