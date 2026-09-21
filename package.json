@@ -1,6 +1,6 @@
 {
 	"name": "longshot-pdf",
-	"version": "0.2.0",
+	"version": "0.2.1",
 	"description": "Obsidian 插件 Longshot PDF：把笔记的阅读视图截成长图，再分页排版到纸上导出 PDF / 图片。",
 	"private": true,
 	"scripts": {

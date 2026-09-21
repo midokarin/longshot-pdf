@@ -609,6 +609,14 @@ export default class LongshotPdfPlugin extends Plugin {
 								dpi: resolveQualityDpi(settings.quality),
 								format: imageFormat,
 								jpegQuality: settings.jpegQuality,
+								layout: {
+									paperWidthMm: paper.widthMm,
+									marginTopMm: settings.marginTopMm,
+									marginRightMm: settings.marginRightMm,
+									marginBottomMm: settings.marginBottomMm,
+									marginLeftMm: settings.marginLeftMm,
+									paperColor: ctx.backgroundColor,
+								},
 							});
 				const name = buildFileName(settings, file, mode === "long" ? imageExt : "pdf", "-long");
 				saved.push(await writeBinary(this.app, target, name, data));

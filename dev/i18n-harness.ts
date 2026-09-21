@@ -77,6 +77,9 @@ async function run() {
  for(const type of ['paged','long'])for(const format of ['pdf','jpeg','png']) {
   typeSelect.value=type;typeSelect.dispatchEvent(new Event('change'));formatSelect.value=format;formatSelect.dispatchEvent(new Event('change'));await tick();
   check(settings.exportType===type&&settings.exportFormat===format,`${type}/${format}: option values unchanged`);
+  const marginLabel=[...modal.contentEl.querySelectorAll('.setting-item-name')].find(el=>el.textContent===t('页边距'))!;
+  const marginVisible=!marginLabel.closest('.longshot-modal-section')!.classList.contains('is-hidden');
+  check(marginVisible===(type==='paged'||format==='pdf'),`${type}/${format}: margin controls visibility`);
   englishOnly(modal.contentEl,`${type}/${format} quick settings`);
  }
  modal.close();

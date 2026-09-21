@@ -1,6 +1,6 @@
 # Longshot PDF
 
-[简体中文](README.md) | English
+[简体中文](README.zh.md) | English
 
 <picture>
   <source srcset="docs/images/logo-horizontal.svg" type="image/svg+xml">
@@ -101,7 +101,7 @@ Click **More settings…**, or open **Settings → Longshot PDF**, to see all op
 | Watermark | Text or image watermarks, author signature, avatar and style templates |
 | Output | Export type, format, quality and folder |
 
-Paper size, margins, headers and footers apply to paginated exports. Long screenshot mode saves the whole note without these page settings.
+Paginated exports use the paper size, margins, headers and footers. A long screenshot PDF uses the selected paper width and all four margins, with its height fitted to the content. It stays on one page without headers or footers. Long screenshot JPG / PNG exports save the whole note as an image.
 
 ![Detailed settings, Capture tab, shown in Chinese](docs/images/full-settings.jpg)
 

@@ -1,6 +1,6 @@
 # Longshot PDF
 
-简体中文 | [English](README.en.md)
+简体中文 | [English](README.md)
 
 <picture>
   <source srcset="docs/images/logo-horizontal.svg" type="image/svg+xml">
@@ -101,7 +101,7 @@ Markdown 笔记 → 阅读视图渲染 → 长截图 → 分页或保留整图 �
 | 水印 | 文字或图片水印、作者署名、头像和样式模板 |
 | 输出 | 导出类型、格式、质量和保存位置 |
 
-纸张、页边距和页眉页脚用于自动分页。长截图模式直接保存整篇画面，不套用这些分页设置。
+自动分页会使用纸张、页边距和页眉页脚设置。长截图 PDF 使用所选纸张的宽度和四周页边距，高度随内容延伸，不切分，也不添加页眉页脚。长截图 JPG / PNG 直接保存整篇画面。
 
 ![详细设置页的截图分栏：渲染宽度、截图倍率、配色与等待时间](docs/images/full-settings.jpg)
 

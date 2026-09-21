@@ -110,34 +110,67 @@ function writeOutline(
 }
 
 /**
- * 长截图直接写成单页 PDF：页面尺寸按 DPI 换算，
- * 超长内容会自动提高 DPI，使页面不超过 PDF 的边长上限。
+ * 长截图写成单页 PDF：按纸宽和页边距排版；未指定版面时按 DPI 换算。
+ * 超长内容等比缩放，使页面不超过 PDF 的边长上限。
  */
 export async function buildLongPdf(
 	source: HTMLCanvasElement,
-	opts: { dpi: number; format: "jpeg" | "png"; jpegQuality: number }
+	opts: {
+		dpi: number;
+		format: "jpeg" | "png";
+		jpegQuality: number;
+		/** 指定版面后按纸宽等比放置截图，高度随内容延伸。 */
+		layout?: {
+			paperWidthMm: number;
+			marginTopMm: number;
+			marginRightMm: number;
+			marginBottomMm: number;
+			marginLeftMm: number;
+			paperColor: string;
+		};
+	}
 ): Promise<ArrayBuffer> {
-	// 横向短笔记和纵向长截图都可能触及 PDF 边长上限，等比缩放两边。
-	const dpi = Math.max(opts.dpi, (Math.max(source.width, source.height) * MM_PER_INCH) / MAX_PAGE_MM);
-	const widthMm = Math.round(((source.width / dpi) * MM_PER_INCH + Number.EPSILON) * 1000) / 1000;
-	const heightMm = Math.round(((source.height / dpi) * MM_PER_INCH + Number.EPSILON) * 1000) / 1000;
+	const layout = opts.layout;
+	const left = Math.max(0, layout?.marginLeftMm ?? 0);
+	const right = Math.max(0, layout?.marginRightMm ?? 0);
+	const top = Math.max(0, layout?.marginTopMm ?? 0);
+	const bottom = Math.max(0, layout?.marginBottomMm ?? 0);
+	// 不重采样源图：仅调整 PDF 中的放置尺寸，清晰度不受边距影响。
+	const imageWidth = layout
+		? Math.max(20, layout.paperWidthMm - left - right)
+		: source.width / opts.dpi * MM_PER_INCH;
+	const imageHeight = imageWidth * source.height / source.width;
+	const pageWidth = imageWidth + left + right;
+	const pageHeight = imageHeight + top + bottom;
+	// PDF 单边超过 200 英寸时，连同留白一起等比收缩，避免裁切与比例改变。
+	const scale = Math.min(1, MAX_PAGE_MM / Math.max(pageWidth, pageHeight));
+	const widthMm = pageWidth * scale;
+	const heightMm = pageHeight * scale;
+	const x = left * scale;
+	const y = top * scale;
+	const imageWidthMm = imageWidth * scale;
+	const imageHeightMm = imageHeight * scale;
 	const doc = new jsPDF({
 		// jsPDF 会根据 orientation 重排 format 的宽高，必须与截图方向一致。
-		orientation: source.width > source.height ? "landscape" : "portrait",
+		orientation: widthMm > heightMm ? "landscape" : "portrait",
 		unit: "mm",
 		format: [widthMm, heightMm],
 		compress: true,
 	});
+	if (layout) {
+		doc.setFillColor(layout.paperColor);
+		doc.rect(0, 0, widthMm, heightMm, "F");
+	}
 	if (opts.format === "png") {
-		doc.addImage(source.toDataURL("image/png"), "PNG", 0, 0, widthMm, heightMm, undefined, "FAST");
+		doc.addImage(source.toDataURL("image/png"), "PNG", x, y, imageWidthMm, imageHeightMm, undefined, "FAST");
 	} else {
 		doc.addImage(
 			source.toDataURL("image/jpeg", opts.jpegQuality),
 			"JPEG",
-			0,
-			0,
-			widthMm,
-			heightMm,
+			x,
+			y,
+			imageWidthMm,
+			imageHeightMm,
 			undefined,
 			"FAST"
 		);

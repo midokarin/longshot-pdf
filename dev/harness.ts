@@ -365,6 +365,9 @@ async function run(): Promise<void> {
 
 	// ── 验证「长截图 + PDF」组合：整篇一张不切分的超长页面 ──
 	const longPdf = await buildLongPdf(capture.canvas, {
+		layout: { paperWidthMm: geometry.paperWidthMm, marginTopMm: settings.marginTopMm,
+			marginRightMm: settings.marginRightMm, marginBottomMm: settings.marginBottomMm,
+			marginLeftMm: settings.marginLeftMm, paperColor: settings.paperColor },
 		dpi: resolveQualityDpi(settings.quality),
 		format: "jpeg",
 		jpegQuality: settings.jpegQuality,
@@ -1000,7 +1003,7 @@ async function run(): Promise<void> {
 				`作者行「${authorDesc}」${authorDesc.includes("已开启") ? " ✅" : " ❌"}`
 		);
 
-		// 换成「长截图」类型，纸张设置会隐藏，但水印开关必须还在
+		// 长截图 PDF 显示纸宽，长图片隐藏；水印开关保持可见。
 		const typeSelect = selectByOption(modal.contentEl, "long");
 		if (typeSelect) {
 			typeSelect.value = "long";
@@ -1011,7 +1014,7 @@ async function run(): Promise<void> {
 		const paperRow = settingByName(modal.contentEl, "纸张尺寸");
 		log(
 			`切「长截图」：水印开关${rowAfterType?.closest(".is-hidden") ? "被误隐藏 ❌" : "仍可见 ✅"}，` +
-				`纸张设置${paperRow?.closest(".is-hidden") ? "已隐藏 ✅" : "仍显示 ❌"}`
+				`纸张设置${Boolean(paperRow?.closest(".is-hidden")) === (fakeSettings.exportFormat !== "pdf") ? "符合格式 ✅" : "显示状态错误 ❌"}`
 		);
 		modal.close();
 	}

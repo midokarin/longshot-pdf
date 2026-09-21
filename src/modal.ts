@@ -22,10 +22,11 @@ import { hasAuthorContent, hasWatermark } from "./watermark";
  */
 export class ExportOptionsModal extends Modal {
 	private readonly plugin: LongshotPdfPlugin;
-	/** 纸张相关设置，导出类型为「长截图」时不需要显示 */
+	/** 纸张宽度也用于长截图 PDF；长图片不显示 */
 	private paperSectionEl: HTMLElement | null = null;
-	/** 高级设置里与纸张相关的一段（页边距 / 页脚），长截图类型时同样隐藏 */
+	/** 分页专用设置（页脚），长截图类型时隐藏 */
 	private advancedPaperEl: HTMLElement | null = null;
+	private marginSectionEl: HTMLElement | null = null;
 	/** 组合结果提示（A4 多页 PDF / 一张长图 JPG …） */
 	private formatHintEl: HTMLElement | null = null;
 	/** 「输出位置」那一行：当前保存路径显示在它的说明文字里 */
@@ -166,11 +167,12 @@ export class ExportOptionsModal extends Modal {
 		advanced.createEl("summary", { text: t("高级设置") });
 		const advancedBody = advanced.createDiv({ cls: "longshot-advanced-body" });
 
-		// 页边距与页脚只对分页排版有效，导出长截图时随纸张设置一起隐藏
+		// PDF 长截图同样支持页边距；页脚仍只用于分页导出。
+		const margins = advancedBody.createDiv({ cls: "longshot-modal-section" });
+		this.marginSectionEl = margins;
+		this.addMarginSetting(margins);
 		const advancedPaper = advancedBody.createDiv({ cls: "longshot-modal-section" });
 		this.advancedPaperEl = advancedPaper;
-
-		this.addMarginSetting(advancedPaper);
 
 		new Setting(advancedPaper)
 			.setName(t("页脚"))
@@ -264,7 +266,9 @@ export class ExportOptionsModal extends Modal {
 	private refresh(): void {
 		const settings = this.plugin.settings;
 		const isLong = settings.exportType === "long";
-		this.paperSectionEl?.toggleClass("is-hidden", isLong);
+		const isLongImage = isLong && settings.exportFormat !== "pdf";
+		this.paperSectionEl?.toggleClass("is-hidden", isLongImage);
+		this.marginSectionEl?.toggleClass("is-hidden", isLongImage);
 		this.advancedPaperEl?.toggleClass("is-hidden", isLong);
 
 		if (this.formatHintEl) {
@@ -273,7 +277,7 @@ export class ExportOptionsModal extends Modal {
 			const hint =
 				settings.exportFormat === "pdf"
 					? isLong
-						? t("将输出：一张不切分的超长页面 PDF")
+						? t("将输出：一张不切分的 PDF，使用纸张宽度与页边距，高度随内容延伸")
 						: t("将输出：按 {0} 分页排版的多页 PDF", paper)
 					: isLong
 						? t("将输出：一张长图 {0}", imageExt)

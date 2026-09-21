@@ -1,5 +1,6 @@
 /** English UI messages. Chinese source text is the stable lookup key. */
 export const en = {
+	"将输出：一张不切分的 PDF，使用纸张宽度与页边距，高度随内容延伸": "Output: one continuous PDF using the paper width and margins, with height fitted to the content",
 	"笔记内容过长（约 {0} px），超出 canvas 上限，无法一次性截取": "The note is too long (about {0} px) to capture within the canvas limit.",
 	"截图区域尺寸异常，无法截取": "Cannot capture this area: invalid dimensions.",
 	"无法创建 canvas 上下文": "Cannot create a canvas context.",
@@ -107,7 +108,6 @@ export const en = {
 	"预览分页…": "Preview pages…",
 	"更多设置…": "More settings…",
 	"取消": "Cancel",
-	"将输出：一张不切分的超长页面 PDF": "Output: one continuous PDF page",
 	"将输出：按 {0} 分页排版的多页 PDF": "Output: a multi-page PDF on {0} paper",
 	"将输出：一张长图 {0}": "Output: one long {0} image",
 	"将输出：每页一张 {0}，按 {1} 分页": "Output: one {0} image per page on {1} paper",
