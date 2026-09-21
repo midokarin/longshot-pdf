@@ -1,3 +1,4 @@
+import { t } from "./i18n";
 import { App, Modal, Setting } from "obsidian";
 import type LongshotPdfPlugin from "./main";
 import { describeTarget, resolveOutputTarget } from "./files";
@@ -44,23 +45,23 @@ export class ExportOptionsModal extends Modal {
 		this.modalEl.addClass("longshot-modal");
 		const { contentEl } = this;
 		contentEl.empty();
-		contentEl.createEl("h2", { text: "长截图导出" });
+		contentEl.createEl("h2", { text: t("长截图导出") });
 
 		const settings = this.plugin.settings;
 		const file = this.app.workspace.getActiveFile();
 		const target = file && file.extension === "md" ? file : null;
 		const note = contentEl.createDiv({ cls: "longshot-modal-note" });
 		if (target) {
-			note.createSpan({ text: "当前笔记：" });
+			note.createSpan({ text: t("当前笔记：") });
 			note.createEl("strong", { text: target.basename });
 		} else {
 			note.addClass("longshot-modal-warn");
-			note.createSpan({ text: "当前没有打开 Markdown 笔记，请先打开一篇再导出。" });
+			note.createSpan({ text: t("当前没有打开 Markdown 笔记，请先打开一篇再导出。") });
 		}
 
 		new Setting(contentEl)
-			.setName("导出类型")
-			.setDesc("自动分页：按纸张切成多页；长截图：整篇拼成一张长图，不切分。")
+			.setName(t("导出类型"))
+			.setDesc(t("自动分页：按纸张切成多页；长截图：整篇拼成一张长图，不切分。"))
 			.addDropdown((dropdown) => {
 				for (const type of Object.keys(EXPORT_TYPE_LABELS) as ExportType[]) {
 					dropdown.addOption(type, EXPORT_TYPE_LABELS[type]);
@@ -74,8 +75,8 @@ export class ExportOptionsModal extends Modal {
 			});
 
 		new Setting(contentEl)
-			.setName("导出格式")
-			.setDesc("长截图 + PDF 会得到一张不切分的超长页面 PDF。")
+			.setName(t("导出格式"))
+			.setDesc(t("长截图 + PDF 会得到一张不切分的超长页面 PDF。"))
 			.addDropdown((dropdown) => {
 				for (const format of Object.keys(EXPORT_FORMAT_LABELS) as ExportFormat[]) {
 					dropdown.addOption(format, EXPORT_FORMAT_LABELS[format]);
@@ -95,8 +96,8 @@ export class ExportOptionsModal extends Modal {
 		this.paperSectionEl = paper;
 
 		new Setting(paper)
-			.setName("纸张尺寸")
-			.setDesc("选「自定义尺寸」时，宽高在「更多设置…」里填写。")
+			.setName(t("纸张尺寸"))
+			.setDesc(t("选「自定义尺寸」时，宽高在「更多设置…」里填写。"))
 			.addDropdown((dropdown) => {
 				for (const id of Object.keys(PAPER_LABELS) as PaperId[]) {
 					dropdown.addOption(id, PAPER_LABELS[id]);
@@ -109,8 +110,8 @@ export class ExportOptionsModal extends Modal {
 			});
 
 		new Setting(contentEl)
-		.setName("纸张底色")
-		.setDesc("也是截图底色（截图底色设为「跟随纸张颜色」时）。")
+		.setName(t("纸张底色"))
+		.setDesc(t("也是截图底色（截图底色设为「跟随纸张颜色」时）。"))
 		.addColorPicker((picker) => {
 			picker.setValue(settings.paperColor);
 			picker.onChange(async (value) => {
@@ -120,7 +121,7 @@ export class ExportOptionsModal extends Modal {
 		});
 
 		// 水印：三类互相独立，想加哪一类就勾哪一类；具体样式在设置页的「水印」栏里调
-		new Setting(contentEl).setName("加入水印").setHeading();
+		new Setting(contentEl).setName(t("加入水印")).setHeading();
 		this.watermarkRows = [];
 		const addWatermarkRow = (
 			name: string,
@@ -142,19 +143,19 @@ export class ExportOptionsModal extends Modal {
 			this.watermarkRows.push({ el: row, describe });
 		};
 		addWatermarkRow(
-			"可见水印",
+			t("可见水印"),
 			() => settings.watermarkEnabled,
 			(value) => (settings.watermarkEnabled = value),
 			() => this.describeVisibleWatermark()
 		);
 		addWatermarkRow(
-			"作者信息",
+			t("作者信息"),
 			() => settings.authorEnabled,
 			(value) => (settings.authorEnabled = value),
 			() => this.describeAuthor()
 		);
 		addWatermarkRow(
-			"隐水印",
+			t("隐水印"),
 			() => settings.hiddenWatermarkEnabled,
 			(value) => (settings.hiddenWatermarkEnabled = value),
 			() => this.describeHidden()
@@ -162,7 +163,7 @@ export class ExportOptionsModal extends Modal {
 
 		// 高级设置：不常改的项折叠起来，保持面板整洁
 		const advanced = contentEl.createEl("details", { cls: "longshot-advanced" });
-		advanced.createEl("summary", { text: "高级设置" });
+		advanced.createEl("summary", { text: t("高级设置") });
 		const advancedBody = advanced.createDiv({ cls: "longshot-advanced-body" });
 
 		// 页边距与页脚只对分页排版有效，导出长截图时随纸张设置一起隐藏
@@ -172,8 +173,8 @@ export class ExportOptionsModal extends Modal {
 		this.addMarginSetting(advancedPaper);
 
 		new Setting(advancedPaper)
-			.setName("页脚")
-			.setDesc("可用变量：{{page}} {{pages}} {{name}} {{title}} {{date}}，留空则不显示。")
+			.setName(t("页脚"))
+			.setDesc(t("可用变量：{{page}} {{pages}} {{name}} {{title}} {{date}}，留空则不显示。"))
 			.addText((text) => {
 				text.setPlaceholder("{{page}} / {{pages}}");
 				text.setValue(settings.footerTemplate);
@@ -184,8 +185,8 @@ export class ExportOptionsModal extends Modal {
 			});
 
 		new Setting(advancedBody)
-			.setName("内容宽度")
-			.setDesc("渲染宽度（px），决定换行位置；越宽每行字数越多。")
+			.setName(t("内容宽度"))
+			.setDesc(t("渲染宽度（px），决定换行位置；越宽每行字数越多。"))
 			.addText((text) => {
 				text.inputEl.type = "number";
 				text.inputEl.addClass("longshot-number-input");
@@ -198,8 +199,8 @@ export class ExportOptionsModal extends Modal {
 			});
 
 		new Setting(advancedBody)
-			.setName("输出质量")
-			.setDesc("清晰度与文件体积的取舍。")
+			.setName(t("输出质量"))
+			.setDesc(t("清晰度与文件体积的取舍。"))
 			.addDropdown((dropdown) => {
 				for (const level of Object.keys(QUALITY_LABELS) as QualityLevel[]) {
 					dropdown.addOption(level, QUALITY_LABELS[level]);
@@ -212,10 +213,10 @@ export class ExportOptionsModal extends Modal {
 			});
 
 		const outputSetting = new Setting(contentEl)
-			.setName("输出位置")
-			.setDesc("导出文件的保存文件夹；默认放在笔记所在目录。")
+			.setName(t("输出位置"))
+			.setDesc(t("导出文件的保存文件夹；默认放在笔记所在目录。"))
 			.addButton((button) => {
-				button.setButtonText("选择文件夹…").onClick(async () => {
+				button.setButtonText(t("选择文件夹…")).onClick(async () => {
 					if (await this.plugin.chooseOutputDir()) {
 						this.refresh();
 					}
@@ -224,7 +225,7 @@ export class ExportOptionsModal extends Modal {
 			.addExtraButton((button) => {
 				button
 					.setIcon("rotate-ccw")
-					.setTooltip("恢复为「跟随笔记所在目录」")
+					.setTooltip(t("恢复为「跟随笔记所在目录」"))
 					.onClick(async () => {
 						this.plugin.settings.outputDir = "";
 						await this.plugin.saveSettings();
@@ -234,17 +235,17 @@ export class ExportOptionsModal extends Modal {
 		this.outputSettingEl = outputSetting;
 
 		const footer = contentEl.createDiv({ cls: "longshot-modal-footer" });
-		const previewButton = footer.createEl("button", { text: "预览分页…" });
+		const previewButton = footer.createEl("button", { text: t("预览分页…") });
 		previewButton.addEventListener("click", () => {
 			this.close();
 			void this.plugin.openPreview();
 		});
 		this.previewButtonEl = previewButton;
-		const moreButton = footer.createEl("button", { text: "更多设置…" });
+		const moreButton = footer.createEl("button", { text: t("更多设置…") });
 		moreButton.addEventListener("click", () => this.openPluginSettings());
-		const cancelButton = footer.createEl("button", { text: "取消" });
+		const cancelButton = footer.createEl("button", { text: t("取消") });
 		cancelButton.addEventListener("click", () => this.close());
-		const runButton = footer.createEl("button", { text: "开始导出", cls: "mod-cta" });
+		const runButton = footer.createEl("button", { text: t("开始导出"), cls: "mod-cta" });
 		runButton.addEventListener("click", () => {
 			const mode = resolveExportMode(this.plugin.settings);
 			this.close();
@@ -272,12 +273,12 @@ export class ExportOptionsModal extends Modal {
 			const hint =
 				settings.exportFormat === "pdf"
 					? isLong
-						? "将输出：一张不切分的超长页面 PDF"
-						: `将输出：按 ${paper} 分页排版的多页 PDF`
+						? t("将输出：一张不切分的超长页面 PDF")
+						: t("将输出：按 {0} 分页排版的多页 PDF", paper)
 					: isLong
-						? `将输出：一张长图 ${imageExt}`
-						: `将输出：每页一张 ${imageExt}，按 ${paper} 分页`;
-			this.formatHintEl.setText(`格式组合 → ${hint}`);
+						? t("将输出：一张长图 {0}", imageExt)
+						: t("将输出：每页一张 {0}，按 {1} 分页", imageExt, paper);
+			this.formatHintEl.setText(t("格式组合 → {0}", hint));
 		}
 
 		for (const row of this.watermarkRows) {
@@ -289,7 +290,7 @@ export class ExportOptionsModal extends Modal {
 			const source = mdFile && mdFile.extension === "md" ? mdFile : null;
 			const target = resolveOutputTarget(settings, source);
 			this.outputSettingEl.setDesc(
-				`导出文件的保存文件夹。当前：${describeTarget(target, source)}${source ? "" : "（打开笔记后可显示具体目录）"}`
+				t("导出文件的保存文件夹。当前：{0}{1}", describeTarget(target, source), source ? "" : t("（打开笔记后可显示具体目录）"))
 			);
 		}
 
@@ -304,49 +305,49 @@ export class ExportOptionsModal extends Modal {
 	private describeVisibleWatermark(): string {
 		const settings = this.plugin.settings;
 		if (!settings.watermarkEnabled) {
-			return "在每页（或整张长图）上叠加半透明水印；文字 / 图片在「更多设置…」的「水印」栏里填。";
+			return t("在每页（或整张长图）上叠加半透明水印；文字 / 图片在「更多设置…」的「水印」栏里填。");
 		}
 		if (!hasWatermark(settings)) {
-			return "已开启，但还没填水印文字或图片，导出时不会生效。";
+			return t("已开启，但还没填水印文字或图片，导出时不会生效。");
 		}
 		if (settings.watermarkImagePath.trim()) {
-			return `已开启：图片「${settings.watermarkImagePath.trim()}」`;
+			return t("已开启：图片「{0}」", settings.watermarkImagePath.trim());
 		}
-		return `已开启：文字「${settings.watermarkText.trim()}」`;
+		return t("已开启：文字「{0}」", settings.watermarkText.trim());
 	}
 
 	private describeAuthor(): string {
 		const settings = this.plugin.settings;
 		if (!settings.authorEnabled) {
-			return "在正文下方加一条署名（头像 / 名字 / 附加文字）。";
+			return t("在正文下方加一条署名（头像 / 名字 / 附加文字）。");
 		}
 		if (!hasAuthorContent(settings)) {
-			return "已开启，但还没填名字、附加文字或头像，导出时不会生效。";
+			return t("已开启，但还没填名字、附加文字或头像，导出时不会生效。");
 		}
 		const parts = [settings.authorName.trim(), settings.authorText.trim()].filter(
 			(part) => part.length > 0
 		);
-		if (settings.authorAvatarPath.trim()) parts.push("含头像");
-		return `已开启：${parts.join(" · ")}`;
+		if (settings.authorAvatarPath.trim()) parts.push(t("含头像"));
+		return t("已开启：{0}", parts.join(" · "));
 	}
 
 	private describeHidden(): string {
 		const settings = this.plugin.settings;
 		if (!settings.hiddenWatermarkEnabled) {
-			return "把一段标识写进图片像素的最低位，肉眼不可见；仅 PNG / 无损 PDF 可靠。";
+			return t("把一段标识写进图片像素的最低位，肉眼不可见；仅 PNG / 无损 PDF 可靠。");
 		}
 		const text = settings.hiddenWatermarkText.trim();
-		return text ? `已开启：写入「${text}」` : "已开启，但隐水印内容为空，导出时不会生效。";
+		return text ? t("已开启：写入「{0}」", text) : t("已开启，但隐水印内容为空，导出时不会生效。");
 	}
 
 	private addMarginSetting(parent: HTMLElement): void {
 		const settings = this.plugin.settings;
-		const setting = new Setting(parent).setName("页边距").setDesc("单位 mm，依次为 上 / 右 / 下 / 左。");
+		const setting = new Setting(parent).setName(t("页边距")).setDesc(t("单位 mm，依次为 上 / 右 / 下 / 左。"));
 		const fields: { label: string; get: () => number; set: (value: number) => void }[] = [
-			{ label: "上", get: () => settings.marginTopMm, set: (v) => (settings.marginTopMm = v) },
-			{ label: "右", get: () => settings.marginRightMm, set: (v) => (settings.marginRightMm = v) },
-			{ label: "下", get: () => settings.marginBottomMm, set: (v) => (settings.marginBottomMm = v) },
-			{ label: "左", get: () => settings.marginLeftMm, set: (v) => (settings.marginLeftMm = v) },
+			{ label: t("上"), get: () => settings.marginTopMm, set: (v) => (settings.marginTopMm = v) },
+			{ label: t("右"), get: () => settings.marginRightMm, set: (v) => (settings.marginRightMm = v) },
+			{ label: t("下"), get: () => settings.marginBottomMm, set: (v) => (settings.marginBottomMm = v) },
+			{ label: t("左"), get: () => settings.marginLeftMm, set: (v) => (settings.marginLeftMm = v) },
 		];
 		for (const field of fields) {
 			const wrap = setting.controlEl.createDiv({ cls: "longshot-margin-item" });
@@ -399,10 +400,10 @@ export class ConfirmModal extends Modal {
 		this.titleEl.setText(this.opts.title);
 		this.contentEl.createEl("p", { text: this.opts.message });
 		const footer = this.contentEl.createDiv({ cls: "longshot-modal-footer" });
-		const cancel = footer.createEl("button", { text: this.opts.cancelText ?? "取消导出" });
+		const cancel = footer.createEl("button", { text: this.opts.cancelText ?? t("取消导出") });
 		cancel.addEventListener("click", () => this.settle(false));
 		const confirm = footer.createEl("button", {
-			text: this.opts.confirmText ?? "仍然导出",
+			text: this.opts.confirmText ?? t("仍然导出"),
 			cls: "mod-cta",
 		});
 		confirm.addEventListener("click", () => this.settle(true));

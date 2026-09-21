@@ -1,3 +1,4 @@
+import { t } from "./i18n";
 import { App, TFile, normalizePath } from "obsidian";
 import { promises as fs } from "fs";
 import {
@@ -60,8 +61,8 @@ export async function ensureTarget(app: App, target: OutputTarget): Promise<void
 /** 设置页 / 快速面板里展示的「当前会存到哪里」 */
 export function describeTarget(target: OutputTarget, file: TFile | null): string {
 	if (target.kind === "fs") return target.folder;
-	if (target.folder) return `（库内：${target.folder}）`;
-	return file ? `（跟随笔记：${file.parent?.path || "库根目录"}）` : "（跟随笔记所在目录）";
+	if (target.folder) return t("（库内：{0}）", target.folder);
+	return file ? t("（跟随笔记：{0}）", file.parent?.path || t("库根目录")) : t("（跟随笔记所在目录）");
 }
 
 /** 库在磁盘上的根目录；系统文件选择框用它当默认位置 */

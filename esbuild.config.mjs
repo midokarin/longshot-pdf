@@ -47,7 +47,7 @@ const pluginBuild = {
 };
 
 const harnessBuild = {
-	entryPoints: ["dev/harness.ts", "dev/bench.ts"],
+	entryPoints: ["dev/harness.ts", "dev/bench.ts", "dev/i18n-harness.ts"],
 	bundle: true,
 	// harness 在浏览器里跑，没有 obsidian / node 运行时，用桩件顶替
 	alias: {

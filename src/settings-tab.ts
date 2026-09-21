@@ -1,3 +1,4 @@
+import { t } from "./i18n";
 import { App, Notice, PluginSettingTab, Setting, setIcon } from "obsidian";
 import type LongshotPdfPlugin from "./main";
 import { describeTarget, resolveOutputTarget } from "./files";
@@ -81,17 +82,17 @@ export class LongshotSettingTab extends PluginSettingTab {
 		containerEl.empty();
 		containerEl.addClass("longshot-settings");
 		containerEl.createEl("p", {
-			text: "把笔记按阅读视图的样式渲染成长图，再自动分页、缩放并排版到纸张上，导出 PDF / 分页图片。",
+			text: t("把笔记按阅读视图的样式渲染成长图，再自动分页、缩放并排版到纸张上，导出 PDF / 分页图片。"),
 			cls: "setting-item-description",
 		});
 
 		const tabs: { id: string; label: string; icon: string; render: (parent: HTMLElement) => void }[] = [
-			{ id: "capture", label: "截图", icon: "camera", render: (parent) => this.renderCapture(parent) },
-			{ id: "paper", label: "纸张", icon: "file-text", render: (parent) => this.renderPaper(parent) },
-			{ id: "header", label: "页眉页脚", icon: "layout-template", render: (parent) => this.renderHeaderFooter(parent) },
-			{ id: "pagination", label: "分页", icon: "scissors", render: (parent) => this.renderPagination(parent) },
-			{ id: "watermark", label: "水印", icon: "droplet", render: (parent) => this.renderWatermark(parent) },
-			{ id: "output", label: "输出", icon: "download", render: (parent) => this.renderOutput(parent) },
+			{ id: "capture", label: t("截图"), icon: "camera", render: (parent) => this.renderCapture(parent) },
+			{ id: "paper", label: t("纸张"), icon: "file-text", render: (parent) => this.renderPaper(parent) },
+			{ id: "header", label: t("页眉页脚"), icon: "layout-template", render: (parent) => this.renderHeaderFooter(parent) },
+			{ id: "pagination", label: t("分页"), icon: "scissors", render: (parent) => this.renderPagination(parent) },
+			{ id: "watermark", label: t("水印"), icon: "droplet", render: (parent) => this.renderWatermark(parent) },
+			{ id: "output", label: t("输出"), icon: "download", render: (parent) => this.renderOutput(parent) },
 		];
 		const active = tabs.find((tab) => tab.id === this.activeTab) ?? tabs[0];
 
@@ -125,8 +126,8 @@ export class LongshotSettingTab extends PluginSettingTab {
 
 		this.addNumber(
 			parent,
-			"渲染宽度",
-			"离屏渲染时的内容宽度（CSS px）。它决定排版换行位置与输出清晰度：数值越大，一行容纳的内容越多。",
+			t("渲染宽度"),
+			t("离屏渲染时的内容宽度（CSS px）。它决定排版换行位置与输出清晰度：数值越大，一行容纳的内容越多。"),
 			() => settings.contentWidth,
 			(value) => (settings.contentWidth = value),
 			{ min: 320, max: 1600, step: 10 }
@@ -134,21 +135,21 @@ export class LongshotSettingTab extends PluginSettingTab {
 
 		this.addNumber(
 			parent,
-			"截图倍率",
-			"DOM 渲染到画布的像素比。推荐 2–3，越大越清晰、越慢。内容特别长时会自动降级。",
+			t("截图倍率"),
+			t("DOM 渲染到画布的像素比。推荐 2–3，越大越清晰、越慢。内容特别长时会自动降级。"),
 			() => settings.captureScale,
 			(value) => (settings.captureScale = value),
 			{ min: 1, max: 5, step: 0.5 }
 		);
 
 		new Setting(parent)
-			.setName("渲染配色")
-			.setDesc("截图时使用的主题配色。为了让导出的「纸」更好看，默认用浅色渲染。")
+			.setName(t("渲染配色"))
+			.setDesc(t("截图时使用的主题配色。为了让导出的「纸」更好看，默认用浅色渲染。"))
 			.addDropdown((dropdown) => {
 				const options: Record<RenderTheme, string> = {
-					light: "浅色（推荐）",
-					dark: "深色",
-					theme: "跟随当前主题",
+					light: t("浅色（推荐）"),
+					dark: t("深色"),
+					theme: t("跟随当前主题"),
 				};
 				dropdown.addOptions(options);
 				dropdown.setValue(settings.renderTheme);
@@ -159,8 +160,8 @@ export class LongshotSettingTab extends PluginSettingTab {
 			});
 
 		new Setting(parent)
-			.setName("截图包含标题")
-			.setDesc("把笔记标题按阅读视图的内联标题渲染进截图；若正文里已手写一级标题，可能会出现两个标题。")
+			.setName(t("截图包含标题"))
+			.setDesc(t("把笔记标题按阅读视图的内联标题渲染进截图；若正文里已手写一级标题，可能会出现两个标题。"))
 			.addToggle((toggle) => {
 				toggle.setValue(settings.includeTitle);
 				toggle.onChange(async (value) => {
@@ -170,12 +171,12 @@ export class LongshotSettingTab extends PluginSettingTab {
 			});
 
 		new Setting(parent)
-			.setName("截图底色")
-			.setDesc("默认跟随纸张颜色，这样米色 / 深色纸张上不会有突兀的色块。")
+			.setName(t("截图底色"))
+			.setDesc(t("默认跟随纸张颜色，这样米色 / 深色纸张上不会有突兀的色块。"))
 			.addDropdown((dropdown) => {
 				dropdown.addOptions({
-					paper: "跟随纸张颜色（推荐）",
-					theme: "跟随主题背景",
+					paper: t("跟随纸张颜色（推荐）"),
+					theme: t("跟随主题背景"),
 				} as Record<CaptureBackground, string>);
 				dropdown.setValue(settings.captureBackground);
 				dropdown.onChange(async (value) => {
@@ -186,8 +187,8 @@ export class LongshotSettingTab extends PluginSettingTab {
 
 		this.addNumber(
 			parent,
-			"渲染等待",
-			"渲染完成后的额外等待时间（ms），给 Mermaid、数学公式、嵌入笔记留出加载时间。",
+			t("渲染等待"),
+			t("渲染完成后的额外等待时间（ms），给 Mermaid、数学公式、嵌入笔记留出加载时间。"),
 			() => settings.settleDelayMs,
 			(value) => (settings.settleDelayMs = value),
 			{ min: 0, max: 8000, step: 100 }
@@ -195,8 +196,8 @@ export class LongshotSettingTab extends PluginSettingTab {
 
 		this.addNumber(
 			parent,
-			"渲染等待上限",
-			"等待 Mermaid、数学公式、图片、嵌入笔记渲染完成的最长时间（ms）。超时会询问是否仍然导出。",
+			t("渲染等待上限"),
+			t("等待 Mermaid、数学公式、图片、嵌入笔记渲染完成的最长时间（ms）。超时会询问是否仍然导出。"),
 			() => settings.renderTimeoutMs,
 			(value) => (settings.renderTimeoutMs = value),
 			{ min: 0, max: 60000, step: 500 }
@@ -209,8 +210,8 @@ export class LongshotSettingTab extends PluginSettingTab {
 		const settings = this.plugin.settings;
 
 		new Setting(parent)
-			.setName("纸张尺寸")
-			.setDesc("导出 PDF 的页面尺寸。")
+			.setName(t("纸张尺寸"))
+			.setDesc(t("导出 PDF 的页面尺寸。"))
 			.addDropdown((dropdown) => {
 				dropdown.addOptions(PAPER_LABELS);
 				dropdown.setValue(settings.paper);
@@ -224,16 +225,16 @@ export class LongshotSettingTab extends PluginSettingTab {
 		if (settings.paper === "custom") {
 			this.addNumber(
 				parent,
-				"自定义宽度 (mm)",
-				"仅在纸张尺寸选择「自定义」时生效。",
+				t("自定义宽度 (mm)"),
+				t("仅在纸张尺寸选择「自定义」时生效。"),
 				() => settings.customWidthMm,
 				(value) => (settings.customWidthMm = value),
 				{ min: 50, max: 1000, step: 1 }
 			);
 			this.addNumber(
 				parent,
-				"自定义高度 (mm)",
-				"仅在纸张尺寸选择「自定义」时生效。",
+				t("自定义高度 (mm)"),
+				t("仅在纸张尺寸选择「自定义」时生效。"),
 				() => settings.customHeightMm,
 				(value) => (settings.customHeightMm = value),
 				{ min: 50, max: 1000, step: 1 }
@@ -241,8 +242,8 @@ export class LongshotSettingTab extends PluginSettingTab {
 		}
 
 		new Setting(parent)
-			.setName("横向")
-			.setDesc("开启后纸张横放（长边为宽）。")
+			.setName(t("横向"))
+			.setDesc(t("开启后纸张横放（长边为宽）。"))
 			.addToggle((toggle) => {
 				toggle.setValue(settings.landscape);
 				toggle.onChange(async (value) => {
@@ -251,14 +252,14 @@ export class LongshotSettingTab extends PluginSettingTab {
 				});
 			});
 
-		this.addNumber(parent, "上边距 (mm)", "正文距纸张上边缘的距离。", () => settings.marginTopMm, (v) => (settings.marginTopMm = v), { min: 0, max: 80, step: 1 });
-		this.addNumber(parent, "下边距 (mm)", "正文距纸张下边缘的距离。", () => settings.marginBottomMm, (v) => (settings.marginBottomMm = v), { min: 0, max: 80, step: 1 });
-		this.addNumber(parent, "左边距 (mm)", "正文距纸张左边缘的距离。", () => settings.marginLeftMm, (v) => (settings.marginLeftMm = v), { min: 0, max: 80, step: 1 });
-		this.addNumber(parent, "右边距 (mm)", "正文距纸张右边缘的距离。", () => settings.marginRightMm, (v) => (settings.marginRightMm = v), { min: 0, max: 80, step: 1 });
+		this.addNumber(parent, t("上边距 (mm)"), t("正文距纸张上边缘的距离。"), () => settings.marginTopMm, (v) => (settings.marginTopMm = v), { min: 0, max: 80, step: 1 });
+		this.addNumber(parent, t("下边距 (mm)"), t("正文距纸张下边缘的距离。"), () => settings.marginBottomMm, (v) => (settings.marginBottomMm = v), { min: 0, max: 80, step: 1 });
+		this.addNumber(parent, t("左边距 (mm)"), t("正文距纸张左边缘的距离。"), () => settings.marginLeftMm, (v) => (settings.marginLeftMm = v), { min: 0, max: 80, step: 1 });
+		this.addNumber(parent, t("右边距 (mm)"), t("正文距纸张右边缘的距离。"), () => settings.marginRightMm, (v) => (settings.marginRightMm = v), { min: 0, max: 80, step: 1 });
 
 		new Setting(parent)
-			.setName("纸张颜色")
-			.setDesc("页面底色，例如 #ffffff 或 #faf7f0（米色护眼纸）。")
+			.setName(t("纸张颜色"))
+			.setDesc(t("页面底色，例如 #ffffff 或 #faf7f0（米色护眼纸）。"))
 			.addColorPicker((picker) => {
 				picker.setValue(settings.paperColor);
 				picker.onChange(async (value) => {
@@ -268,8 +269,8 @@ export class LongshotSettingTab extends PluginSettingTab {
 			});
 
 		new Setting(parent)
-			.setName("纸张边框")
-			.setDesc("在页面四边加一圈细线（类似信纸边框）。")
+			.setName(t("纸张边框"))
+			.setDesc(t("在页面四边加一圈细线（类似信纸边框）。"))
 			.addToggle((toggle) => {
 				toggle.setValue(settings.borderEnabled);
 				toggle.onChange(async (value) => {
@@ -280,9 +281,9 @@ export class LongshotSettingTab extends PluginSettingTab {
 			});
 
 		if (settings.borderEnabled) {
-			this.addNumber(parent, "边框线宽 (pt)", "0 表示不画边框。", () => settings.borderWidthPt, (v) => (settings.borderWidthPt = v), { min: 0, max: 6, step: 0.5 });
-			this.addNumber(parent, "边框内缩 (mm)", "边框距纸张边缘的距离。", () => settings.borderInsetMm, (v) => (settings.borderInsetMm = v), { min: 0, max: 40, step: 1 });
-			new Setting(parent).setName("边框颜色").addColorPicker((picker) => {
+			this.addNumber(parent, t("边框线宽 (pt)"), t("0 表示不画边框。"), () => settings.borderWidthPt, (v) => (settings.borderWidthPt = v), { min: 0, max: 6, step: 0.5 });
+			this.addNumber(parent, t("边框内缩 (mm)"), t("边框距纸张边缘的距离。"), () => settings.borderInsetMm, (v) => (settings.borderInsetMm = v), { min: 0, max: 40, step: 1 });
+			new Setting(parent).setName(t("边框颜色")).addColorPicker((picker) => {
 				picker.setValue(settings.borderColor);
 				picker.onChange(async (value) => {
 					settings.borderColor = value;
@@ -298,24 +299,24 @@ export class LongshotSettingTab extends PluginSettingTab {
 
 		this.addText(
 			parent,
-			"页眉模板",
-			"留空则不显示。可用变量：{{name}} 笔记名、{{date}} 日期、{{page}} 页码、{{pages}} 总页数。",
+			t("页眉模板"),
+			t("留空则不显示。可用变量：{{name}} 笔记名、{{date}} 日期、{{page}} 页码、{{pages}} 总页数。"),
 			() => settings.headerTemplate,
 			(v) => (settings.headerTemplate = v),
-			"例如 {{name}}"
+			t("例如 {{name}}")
 		);
 		this.addText(
 			parent,
-			"页脚模板",
-			"留空则不显示。可用变量同上，默认是页码。",
+			t("页脚模板"),
+			t("留空则不显示。可用变量同上，默认是页码。"),
 			() => settings.footerTemplate,
 			(v) => (settings.footerTemplate = v),
-			"例如 {{page}} / {{pages}}"
+			t("例如 {{page}} / {{pages}}")
 		);
 
-		this.addNumber(parent, "页眉页脚字号 (pt)", "文字大小。", () => settings.footerSizePt, (v) => (settings.footerSizePt = v), { min: 5, max: 24, step: 0.5 });
+		this.addNumber(parent, t("页眉页脚字号 (pt)"), t("文字大小。"), () => settings.footerSizePt, (v) => (settings.footerSizePt = v), { min: 5, max: 24, step: 0.5 });
 
-		new Setting(parent).setName("页眉页脚颜色").addColorPicker((picker) => {
+		new Setting(parent).setName(t("页眉页脚颜色")).addColorPicker((picker) => {
 			picker.setValue(settings.footerColor);
 			picker.onChange(async (value) => {
 				settings.footerColor = value;
@@ -323,8 +324,8 @@ export class LongshotSettingTab extends PluginSettingTab {
 			});
 		});
 
-		this.addAlignSetting(parent, "页眉对齐", () => settings.headerAlign, (v) => (settings.headerAlign = v));
-		this.addAlignSetting(parent, "页脚对齐", () => settings.footerAlign, (v) => (settings.footerAlign = v));
+		this.addAlignSetting(parent, t("页眉对齐"), () => settings.headerAlign, (v) => (settings.headerAlign = v));
+		this.addAlignSetting(parent, t("页脚对齐"), () => settings.footerAlign, (v) => (settings.footerAlign = v));
 	}
 
 	/** ── 分页 ─────────────────────────────────────────────── */
@@ -332,8 +333,8 @@ export class LongshotSettingTab extends PluginSettingTab {
 		const settings = this.plugin.settings;
 
 		new Setting(parent)
-			.setName("智能分页")
-			.setDesc("优先在块与块的间隙处换页，避免把段落、列表、表格、代码块拦腰截断。")
+			.setName(t("智能分页"))
+			.setDesc(t("优先在块与块的间隙处换页，避免把段落、列表、表格、代码块拦腰截断。"))
 			.addToggle((toggle) => {
 				toggle.setValue(settings.smartBreak);
 				toggle.onChange(async (value) => {
@@ -343,8 +344,8 @@ export class LongshotSettingTab extends PluginSettingTab {
 			});
 
 		new Setting(parent)
-			.setName("避免标题孤行")
-			.setDesc("页面末尾只剩一个标题时，把标题挪到下一页。")
+			.setName(t("避免标题孤行"))
+			.setDesc(t("页面末尾只剩一个标题时，把标题挪到下一页。"))
 			.addToggle((toggle) => {
 				toggle.setValue(settings.avoidHeadingOrphan);
 				toggle.onChange(async (value) => {
@@ -354,8 +355,8 @@ export class LongshotSettingTab extends PluginSettingTab {
 			});
 
 		new Setting(parent)
-			.setName("图片不跨页")
-			.setDesc("图片、视频等整体推到下一页，避免被拦腰截断；代价是上一页底部可能留白。")
+			.setName(t("图片不跨页"))
+			.setDesc(t("图片、视频等整体推到下一页，避免被拦腰截断；代价是上一页底部可能留白。"))
 			.addToggle((toggle) => {
 				toggle.setValue(settings.avoidSplittingImages);
 				toggle.onChange(async (value) => {
@@ -365,8 +366,8 @@ export class LongshotSettingTab extends PluginSettingTab {
 			});
 
 		new Setting(parent)
-			.setName("页面填充下限")
-			.setDesc("换页时最少要填满页面的比例。数值越大，页面越满、页尾留白越多。")
+			.setName(t("页面填充下限"))
+			.setDesc(t("换页时最少要填满页面的比例。数值越大，页面越满、页尾留白越多。"))
 			.addSlider((slider) => {
 				slider.setLimits(0.3, 0.9, 0.05);
 				slider.setValue(settings.minFillRatio);
@@ -378,8 +379,8 @@ export class LongshotSettingTab extends PluginSettingTab {
 			});
 
 		new Setting(parent)
-			.setName("强制分页标记")
-			.setDesc("正文里单独成行写 /// 时，在这一行强制换页。代码块里的 /// 不受影响。")
+			.setName(t("强制分页标记"))
+			.setDesc(t("正文里单独成行写 /// 时，在这一行强制换页。代码块里的 /// 不受影响。"))
 			.addToggle((toggle) => {
 				toggle.setValue(settings.respectForcedBreaks);
 				toggle.onChange(async (value) => {
@@ -389,8 +390,8 @@ export class LongshotSettingTab extends PluginSettingTab {
 			});
 
 		new Setting(parent)
-			.setName("PDF 书签")
-			.setDesc("把笔记里的标题按层级写成 PDF 书签，阅读器侧栏可以直接跳转。")
+			.setName(t("PDF 书签"))
+			.setDesc(t("把笔记里的标题按层级写成 PDF 书签，阅读器侧栏可以直接跳转。"))
 			.addToggle((toggle) => {
 				toggle.setValue(settings.pdfOutline);
 				toggle.onChange(async (value) => {
@@ -410,7 +411,7 @@ export class LongshotSettingTab extends PluginSettingTab {
 		const settingsCol = split.createDiv({ cls: "longshot-split-settings" });
 		const emptyNote = previewCol.createDiv({
 			cls: "longshot-preview-empty",
-			text: "开启下面任意一类水印后，这里会显示对应的实时预览。",
+			text: t("开启下面任意一类水印后，这里会显示对应的实时预览。"),
 		});
 		const stack = previewCol.createDiv({ cls: "longshot-preview-stack" });
 
@@ -425,8 +426,8 @@ export class LongshotSettingTab extends PluginSettingTab {
 		const visible = this.watermarkGroup(settingsCol, {
 			id: "visible",
 			icon: "droplet",
-			title: "可见水印",
-			desc: "在每页（或整张长图）上叠加半透明水印：写文字，或者放一张图片。",
+			title: t("可见水印"),
+			desc: t("在每页（或整张长图）上叠加半透明水印：写文字，或者放一张图片。"),
 			enabled: settings.watermarkEnabled,
 			onToggle: (value) => (settings.watermarkEnabled = value),
 		});
@@ -440,8 +441,8 @@ export class LongshotSettingTab extends PluginSettingTab {
 
 			this.addText(
 				visible,
-				"水印文字",
-				"可用变量：{{name}} 笔记名、{{title}} 标题、{{date}} 日期、{{author}} 作者名。",
+				t("水印文字"),
+				t("可用变量：{{name}} 笔记名、{{title}} 标题、{{date}} 日期、{{author}} 作者名。"),
 				() => settings.watermarkText,
 				(v) => (settings.watermarkText = v),
 				"{{name}}",
@@ -449,8 +450,8 @@ export class LongshotSettingTab extends PluginSettingTab {
 			);
 
 			const imageSetting = new Setting(visible)
-				.setName("水印图片")
-				.setDesc("留空则用上面的文字；填库内相对路径，或点右侧按钮从系统文件里选一张。")
+				.setName(t("水印图片"))
+				.setDesc(t("留空则用上面的文字；填库内相对路径，或点右侧按钮从系统文件里选一张。"))
 				.addText((text) => {
 					text.inputEl.addClass("longshot-path-input");
 					text.setPlaceholder("assets/logo.png");
@@ -461,7 +462,7 @@ export class LongshotSettingTab extends PluginSettingTab {
 					});
 				})
 				.addButton((button) => {
-					button.setButtonText("选择图片…").onClick(async () => {
+					button.setButtonText(t("选择图片…")).onClick(async () => {
 						if (await this.plugin.chooseImageFile("watermark")) {
 							this.display();
 						}
@@ -470,7 +471,7 @@ export class LongshotSettingTab extends PluginSettingTab {
 				.addExtraButton((button) => {
 					button
 						.setIcon("rotate-ccw")
-						.setTooltip("清除图片水印")
+						.setTooltip(t("清除图片水印"))
 						.onClick(async () => {
 							settings.watermarkImagePath = "";
 							await this.plugin.saveSettings();
@@ -479,13 +480,13 @@ export class LongshotSettingTab extends PluginSettingTab {
 				});
 			imageSetting.setDesc(
 				settings.watermarkImagePath.trim()
-					? `当前：${settings.watermarkImagePath.trim()}`
-					: "留空则用上面的文字；填库内相对路径，或点右侧按钮从系统文件里选一张。"
+					? t("当前：{0}", settings.watermarkImagePath.trim())
+					: t("留空则用上面的文字；填库内相对路径，或点右侧按钮从系统文件里选一张。")
 			);
 
 			new Setting(visible)
-				.setName("排布")
-				.setDesc("平铺会在整页斜向重复，单个只在页面上放一处。")
+				.setName(t("排布"))
+				.setDesc(t("平铺会在整页斜向重复，单个只在页面上放一处。"))
 				.addDropdown((dropdown) => {
 					dropdown.addOptions(WATERMARK_LAYOUT_LABELS);
 					dropdown.setValue(settings.watermarkLayout);
@@ -498,8 +499,8 @@ export class LongshotSettingTab extends PluginSettingTab {
 
 			if (settings.watermarkLayout === "center") {
 				new Setting(visible)
-					.setName("位置")
-					.setDesc("水印落在纸张的哪个位置（已自动留出边距，不会被裁掉）。")
+					.setName(t("位置"))
+					.setDesc(t("水印落在纸张的哪个位置（已自动留出边距，不会被裁掉）。"))
 					.addDropdown((dropdown) => {
 						dropdown.addOptions(WATERMARK_ANCHOR_LABELS);
 						dropdown.setValue(settings.watermarkAnchor);
@@ -512,8 +513,8 @@ export class LongshotSettingTab extends PluginSettingTab {
 
 			this.addSlider(
 				visible,
-				"大小",
-				"字号，单位 pt。斜向平铺时通常要开得比单个大一些。",
+				t("大小"),
+				t("字号，单位 pt。斜向平铺时通常要开得比单个大一些。"),
 				() => settings.watermarkSizePt,
 				(v) => (settings.watermarkSizePt = v),
 				{ min: 6, max: 120, step: 1 },
@@ -521,8 +522,8 @@ export class LongshotSettingTab extends PluginSettingTab {
 			);
 
 			new Setting(visible)
-				.setName("字体")
-				.setDesc("只影响文字水印。")
+				.setName(t("字体"))
+				.setDesc(t("只影响文字水印。"))
 				.addDropdown((dropdown) => {
 					dropdown.addOptions(WATERMARK_FONT_LABELS);
 					dropdown.setValue(settings.watermarkFont);
@@ -534,8 +535,8 @@ export class LongshotSettingTab extends PluginSettingTab {
 
 			this.addSlider(
 				visible,
-				"不透明度",
-				"0.08 左右既能看到又不影响阅读。",
+				t("不透明度"),
+				t("0.08 左右既能看到又不影响阅读。"),
 				() => settings.watermarkOpacity,
 				(v) => (settings.watermarkOpacity = v),
 				{ min: 0.02, max: 0.5, step: 0.01 },
@@ -543,15 +544,15 @@ export class LongshotSettingTab extends PluginSettingTab {
 			);
 			this.addSlider(
 				visible,
-				"旋转",
-				"单位度，负数表示逆时针倾斜，常用的斜向水印是 -30。",
+				t("旋转"),
+				t("单位度，负数表示逆时针倾斜，常用的斜向水印是 -30。"),
 				() => settings.watermarkRotationDeg,
 				(v) => (settings.watermarkRotationDeg = v),
 				{ min: -90, max: 90, step: 1 },
 				changed
 			);
 
-			new Setting(visible).setName("颜色").addColorPicker((picker) => {
+			new Setting(visible).setName(t("颜色")).addColorPicker((picker) => {
 				picker.setValue(settings.watermarkColor);
 				picker.onChange(async (value) => {
 					settings.watermarkColor = value;
@@ -562,8 +563,8 @@ export class LongshotSettingTab extends PluginSettingTab {
 			if (settings.watermarkImagePath.trim()) {
 				this.addSlider(
 					visible,
-					"图片大小",
-					"图片宽度占纸张宽度的比例（平铺时会再缩小一半）。",
+					t("图片大小"),
+					t("图片宽度占纸张宽度的比例（平铺时会再缩小一半）。"),
 					() => settings.watermarkImageScale,
 					(v) => (settings.watermarkImageScale = v),
 					{ min: 0.05, max: 1, step: 0.05 },
@@ -576,8 +577,8 @@ export class LongshotSettingTab extends PluginSettingTab {
 		const author = this.watermarkGroup(settingsCol, {
 			id: "author",
 			icon: "user",
-			title: "作者信息",
-			desc: "在正文下方加一条署名（头像 / 名字 / 附加文字）；长截图会接在图片底部。",
+			title: t("作者信息"),
+			desc: t("在正文下方加一条署名（头像 / 名字 / 附加文字）；长截图会接在图片底部。"),
 			enabled: settings.authorEnabled,
 			onToggle: (value) => (settings.authorEnabled = value),
 		});
@@ -585,14 +586,14 @@ export class LongshotSettingTab extends PluginSettingTab {
 		if (author) {
 			const preview = authorPreview.refresh;
 
-			this.addText(author, "作者名", "显示在附加文字上方，可用 {{date}} 等变量。", () => settings.authorName, (v) => (settings.authorName = v), "张三", preview);
-			this.addText(author, "附加文字", "例如「2026 年 9 月 · 内部资料」。", () => settings.authorText, (v) => (settings.authorText = v), "", preview);
+			this.addText(author, t("作者名"), t("显示在附加文字上方，可用 {{date}} 等变量。"), () => settings.authorName, (v) => (settings.authorName = v), t("张三"), preview);
+			this.addText(author, t("附加文字"), t("例如「2026 年 9 月 · 内部资料」。"), () => settings.authorText, (v) => (settings.authorText = v), "", preview);
 
-			this.addTemplateGallery(this.addFold(author, "templates", "样式模板 · 选择或保存"), settings);
+			this.addTemplateGallery(this.addFold(author, "templates", t("样式模板 · 选择或保存")), settings);
 
 			const avatarSetting = new Setting(author)
-				.setName("头像图片")
-				.setDesc("留空则不显示头像；填库内相对路径，或从系统文件里选一张。")
+				.setName(t("头像图片"))
+				.setDesc(t("留空则不显示头像；填库内相对路径，或从系统文件里选一张。"))
 				.addText((text) => {
 					text.inputEl.addClass("longshot-path-input");
 					text.setPlaceholder("assets/avatar.png");
@@ -604,7 +605,7 @@ export class LongshotSettingTab extends PluginSettingTab {
 					});
 				})
 				.addButton((button) => {
-					button.setButtonText("选择图片…").onClick(async () => {
+					button.setButtonText(t("选择图片…")).onClick(async () => {
 						if (await this.plugin.chooseImageFile("avatar")) {
 							this.display();
 						}
@@ -613,7 +614,7 @@ export class LongshotSettingTab extends PluginSettingTab {
 				.addExtraButton((button) => {
 					button
 						.setIcon("rotate-ccw")
-						.setTooltip("清除头像")
+						.setTooltip(t("清除头像"))
 						.onClick(async () => {
 							settings.authorAvatarPath = "";
 							await this.plugin.saveSettings();
@@ -622,18 +623,18 @@ export class LongshotSettingTab extends PluginSettingTab {
 				});
 			avatarSetting.setDesc(
 				settings.authorAvatarPath.trim()
-					? `当前：${settings.authorAvatarPath.trim()}`
-					: "留空则不显示头像；填库内相对路径，或从系统文件里选一张。"
+					? t("当前：{0}", settings.authorAvatarPath.trim())
+					: t("留空则不显示头像；填库内相对路径，或从系统文件里选一张。")
 			);
 
 			// 不常改的取景与形状收进独立折叠区。
-			const avatarDetails = this.addFold(author, "avatar", "头像取景与形状");
+			const avatarDetails = this.addFold(author, "avatar", t("头像取景与形状"));
 			this.addAvatarCrop(avatarDetails, settings, preview, authorPreview.getImage, authorPreview.onImageLoaded);
 
 			this.addSelect(
 				avatarDetails,
-				"头像呈现范围",
-				"图片不是正方形时怎么放进头像框：裁剪填满不会变形（取景在上面拖），完整显示会四周留白，拉伸会变形。",
+				t("头像呈现范围"),
+				t("图片不是正方形时怎么放进头像框：裁剪填满不会变形（取景在上面拖），完整显示会四周留白，拉伸会变形。"),
 				AVATAR_FIT_LABELS,
 				() => settings.authorAvatarFit,
 				(value) => (settings.authorAvatarFit = value as AvatarFit),
@@ -641,12 +642,12 @@ export class LongshotSettingTab extends PluginSettingTab {
 				() => this.display()
 			);
 
-			this.addSlider(avatarDetails, "头像尺寸 (mm)", "头像的边长。", () => settings.authorAvatarSizeMm, (v) => (settings.authorAvatarSizeMm = v), { min: 3, max: 30, step: 1 }, preview);
-			this.addSlider(author, "字号 (pt)", "作者名与附加文字的大小。", () => settings.authorSizePt, (v) => (settings.authorSizePt = v), { min: 6, max: 24, step: 0.5 }, preview);
-			this.addSelect(author, "字体", "作者名与附加文字使用的字体。", WATERMARK_FONT_LABELS, () => settings.authorFont, (value) => (settings.authorFont = value as WatermarkFont), preview);
-			this.addSelect(avatarDetails, "头像形状", "头像外框的形状；圆角方形看起来更接近名片。", AVATAR_SHAPE_LABELS, () => settings.authorAvatarShape, (value) => (settings.authorAvatarShape = value as AvatarShape), preview);
+			this.addSlider(avatarDetails, t("头像尺寸 (mm)"), t("头像的边长。"), () => settings.authorAvatarSizeMm, (v) => (settings.authorAvatarSizeMm = v), { min: 3, max: 30, step: 1 }, preview);
+			this.addSlider(author, t("字号 (pt)"), t("作者名与附加文字的大小。"), () => settings.authorSizePt, (v) => (settings.authorSizePt = v), { min: 6, max: 24, step: 0.5 }, preview);
+			this.addSelect(author, t("字体"), t("作者名与附加文字使用的字体。"), WATERMARK_FONT_LABELS, () => settings.authorFont, (value) => (settings.authorFont = value as WatermarkFont), preview);
+			this.addSelect(avatarDetails, t("头像形状"), t("头像外框的形状；圆角方形看起来更接近名片。"), AVATAR_SHAPE_LABELS, () => settings.authorAvatarShape, (value) => (settings.authorAvatarShape = value as AvatarShape), preview);
 
-			new Setting(author).setName("文字颜色").addColorPicker((picker) => {
+			new Setting(author).setName(t("文字颜色")).addColorPicker((picker) => {
 				picker.setValue(settings.authorColor);
 				picker.onChange(async (value) => {
 					settings.authorColor = value;
@@ -654,7 +655,7 @@ export class LongshotSettingTab extends PluginSettingTab {
 					preview();
 				});
 			});
-			this.addAlignSetting(author, "对齐", () => settings.authorAlign, (v) => (settings.authorAlign = v), preview);
+			this.addAlignSetting(author, t("对齐"), () => settings.authorAlign, (v) => (settings.authorAlign = v), preview);
 
 		}
 
@@ -662,8 +663,8 @@ export class LongshotSettingTab extends PluginSettingTab {
 		const hidden = this.watermarkGroup(settingsCol, {
 			id: "hidden",
 			icon: "eye-off",
-			title: "隐水印（像素级）",
-			desc: "把一段标识写进图片像素的最低位，肉眼不可见。仅 PNG 可靠：JPEG 压缩会破坏它。",
+			title: t("隐水印（像素级）"),
+			desc: t("把一段标识写进图片像素的最低位，肉眼不可见。仅 PNG 可靠：JPEG 压缩会破坏它。"),
 			enabled: settings.hiddenWatermarkEnabled,
 			onToggle: (value) => (settings.hiddenWatermarkEnabled = value),
 		});
@@ -672,12 +673,12 @@ export class LongshotSettingTab extends PluginSettingTab {
 			hidden.createEl("p", {
 				cls: "longshot-group-note",
 				text:
-					"开启后 PDF 会改用无损页面（文件更大）。用命令「读取图片里的隐水印」可以校验是否写入成功。",
+					t("开启后 PDF 会改用无损页面（文件更大）。用命令「读取图片里的隐水印」可以校验是否写入成功。"),
 			});
 			this.addText(
 				hidden,
-				"隐水印内容",
-				"可用变量：{{name}} 笔记名、{{title}} 标题、{{date}} 日期、{{author}} 作者名。最长 65535 字节。",
+				t("隐水印内容"),
+				t("可用变量：{{name}} 笔记名、{{title}} 标题、{{date}} 日期、{{author}} 作者名。最长 65535 字节。"),
 				() => settings.hiddenWatermarkText,
 				(v) => (settings.hiddenWatermarkText = v),
 				"Longshot PDF · {{name}} · {{date}}"
@@ -726,7 +727,7 @@ export class LongshotSettingTab extends PluginSettingTab {
 		const box = parent.createDiv({ cls: "longshot-preview-box" });
 		const canvas = box.createEl("canvas", { cls: "longshot-preview-canvas" });
 		const hint = box.createDiv({ cls: "longshot-preview-hint" });
-		const sampleVars = { name: "示例笔记", title: "示例笔记", date: "2026-01-01", author: "作者" };
+		const sampleVars = { name: t("示例笔记"), title: t("示例笔记"), date: "2026-01-01", author: t("作者") };
 
 		/** 已加载图片的缓存，避免每次拖滑块都重新读盘 */
 		let cached: { path: string; image: HTMLImageElement | null } | null = null;
@@ -752,7 +753,7 @@ export class LongshotSettingTab extends PluginSettingTab {
 					buildWatermarkSpec(settings, dpi, sampleVars, cached.image),
 					size
 				);
-				hint.setText(path && !cached.image ? "水印图片加载失败" : "");
+				hint.setText(path && !cached.image ? t("水印图片加载失败") : "");
 				hint.hidden = !hint.textContent;
 			})();
 		};
@@ -777,7 +778,7 @@ export class LongshotSettingTab extends PluginSettingTab {
 		const box = parent.createDiv({ cls: "longshot-preview-box" });
 		const canvas = box.createEl("canvas", { cls: "longshot-preview-canvas" });
 		const hint = box.createDiv({ cls: "longshot-preview-hint" });
-		const sampleVars = { name: "示例笔记", title: "示例笔记", date: "2026-01-01", author: "张三" };
+		const sampleVars = { name: t("示例笔记"), title: t("示例笔记"), date: "2026-01-01", author: t("张三") };
 
 		/** 已加载头像的缓存，避免每次拖滑块都重新读盘 */
 		let cached: { path: string; image: HTMLImageElement | null } | null = null;
@@ -810,7 +811,7 @@ export class LongshotSettingTab extends PluginSettingTab {
 				};
 				drawAuthorPreview(canvas, previewSpec, size);
 
-				hint.setText(path && !cached.image ? "头像加载失败" : "");
+				hint.setText(path && !cached.image ? t("头像加载失败") : "");
 				hint.hidden = !hint.textContent;
 			})();
 		};
@@ -861,16 +862,16 @@ export class LongshotSettingTab extends PluginSettingTab {
 			card.addEventListener("keydown", event => {
 				if (event.target === card && (event.key === "Enter" || event.key === " ")) { event.preventDefault(); card.click(); }
 			});
-			card.setAttribute("aria-label", `套用模板：${template.name}`);
+			card.setAttribute("aria-label", t("套用模板：{0}", template.name));
 			const thumb = card.createEl("canvas", { cls: "longshot-template-thumb" });
 			drawAuthorThumb(thumb, template.style, { name: "Lin", text: "123456@qq.com" });
 			const foot = card.createDiv({ cls: "longshot-template-foot" });
 			foot.createSpan({ cls: "longshot-template-name", text: template.name });
 			if (!template.builtin) {
-				foot.createSpan({ cls: "longshot-template-tag", text: "自定义" });
+				foot.createSpan({ cls: "longshot-template-tag", text: t("自定义") });
 				const remove = foot.createEl("button", { cls: "longshot-template-remove" });
 				setIcon(remove, "trash");
-				remove.setAttribute("aria-label", `删除模板：${template.name}`);
+				remove.setAttribute("aria-label", t("删除模板：{0}", template.name));
 				remove.addEventListener("click", (event) => {
 					event.stopPropagation();
 					void (async () => {
@@ -895,18 +896,18 @@ export class LongshotSettingTab extends PluginSettingTab {
 
 		let nameInputEl: HTMLInputElement | null = null;
 		new Setting(parent)
-			.setName("保存为模板")
-			.setDesc("把当前的样式存成模板，以后可以一键套用；同名会覆盖。")
+			.setName(t("保存为模板"))
+			.setDesc(t("把当前的样式存成模板，以后可以一键套用；同名会覆盖。"))
 			.addText((text) => {
 				nameInputEl = text.inputEl;
 				text.inputEl.addClass("longshot-path-input");
-				text.setPlaceholder("例如：我的署名");
+				text.setPlaceholder(t("例如：我的署名"));
 			})
 			.addButton((button) => {
-				button.setButtonText("保存").onClick(async () => {
+				button.setButtonText(t("保存")).onClick(async () => {
 					const name = (nameInputEl?.value ?? "").trim();
 					if (!name) {
-						new Notice("请先填写模板名称");
+						new Notice(t("请先填写模板名称"));
 						return;
 					}
 					const style = authorStyleOf(settings);
@@ -920,7 +921,7 @@ export class LongshotSettingTab extends PluginSettingTab {
 						this.authorTemplateId = id;
 					}
 					await this.plugin.saveSettings();
-					new Notice(`已保存模板「${name}」`);
+					new Notice(t("已保存模板「{0}」", name));
 					this.display();
 				});
 			});
@@ -940,12 +941,12 @@ export class LongshotSettingTab extends PluginSettingTab {
 		onImageLoaded: (listener: () => void) => void
 	): void {
 		const wrap = parent.createDiv({ cls: "longshot-crop" });
-		wrap.createDiv({ cls: "longshot-crop-title", text: "头像取景" });
+		wrap.createDiv({ cls: "longshot-crop-title", text: t("头像取景") });
 
 		if (settings.authorAvatarFit !== "cover") {
 			wrap.createDiv({
 				cls: "longshot-crop-desc",
-				text: "当前「头像呈现范围」不是裁剪填满，取景不生效；切成「裁剪填满」后就能在这里拖动构图。",
+				text: t("当前「头像呈现范围」不是裁剪填满，取景不生效；切成「裁剪填满」后就能在这里拖动构图。"),
 			});
 			return;
 		}
@@ -953,13 +954,13 @@ export class LongshotSettingTab extends PluginSettingTab {
 		wrap.createDiv({
 			cls: "longshot-crop-desc",
 			text: settings.authorAvatarPath.trim()
-				? "按住图片拖动取景范围，滚轮缩放；虚线圈外是会被裁掉的部分。"
-				: "先在下面选一张头像图片，然后就能在这里拖动取景。",
+				? t("按住图片拖动取景范围，滚轮缩放；虚线圈外是会被裁掉的部分。")
+				: t("先在下面选一张头像图片，然后就能在这里拖动取景。"),
 		});
 
 		const stage = wrap.createDiv({ cls: "longshot-crop-stage" });
 		const canvas = stage.createEl("canvas", { cls: "longshot-crop-canvas" });
-		stage.createDiv({ cls: "longshot-crop-hint", text: "拖动 · 滚轮缩放" });
+		stage.createDiv({ cls: "longshot-crop-hint", text: t("拖动 · 滚轮缩放") });
 
 		let zoomSlider: { setValue: (value: number) => void } | null = null;
 
@@ -989,8 +990,8 @@ export class LongshotSettingTab extends PluginSettingTab {
 		editor.refresh();
 
 		new Setting(wrap)
-			.setName("取景缩放")
-			.setDesc("在「刚好吃满」的基础上放大原图，用来把人物拉近；也可以在图上直接滚轮。")
+			.setName(t("取景缩放"))
+			.setDesc(t("在「刚好吃满」的基础上放大原图，用来把人物拉近；也可以在图上直接滚轮。"))
 			.addSlider((slider) => {
 				zoomSlider = slider;
 				slider.setLimits(1, AVATAR_ZOOM_MAX, 0.05);
@@ -1004,7 +1005,7 @@ export class LongshotSettingTab extends PluginSettingTab {
 				});
 			})
 			.addExtraButton(button => {
-				button.setIcon("rotate-ccw").setTooltip("恢复居中、不放大").onClick(async () => {
+				button.setIcon("rotate-ccw").setTooltip(t("恢复居中、不放大")).onClick(async () => {
 					settings.authorAvatarOffsetX = 0;
 					settings.authorAvatarOffsetY = 0;
 					settings.authorAvatarZoom = 1;
@@ -1021,8 +1022,8 @@ export class LongshotSettingTab extends PluginSettingTab {
 		const settings = this.plugin.settings;
 
 		new Setting(parent)
-			.setName("输出清晰度")
-			.setDesc("PDF 内页面的像素密度。高 = 300 DPI；内容过宽时会自动下调，避免大幅放大。")
+			.setName(t("输出清晰度"))
+			.setDesc(t("PDF 内页面的像素密度。高 = 300 DPI；内容过宽时会自动下调，避免大幅放大。"))
 			.addDropdown((dropdown) => {
 				dropdown.addOptions(QUALITY_LABELS);
 				dropdown.setValue(settings.quality);
@@ -1033,8 +1034,8 @@ export class LongshotSettingTab extends PluginSettingTab {
 			});
 
 		new Setting(parent)
-			.setName("导出类型")
-			.setDesc("自动分页：按纸张切成多页；长截图：整篇拼成一张长图，不切分。")
+			.setName(t("导出类型"))
+			.setDesc(t("自动分页：按纸张切成多页；长截图：整篇拼成一张长图，不切分。"))
 			.addDropdown((dropdown) => {
 				dropdown.addOptions(EXPORT_TYPE_LABELS as Record<ExportType, string>);
 				dropdown.setValue(settings.exportType);
@@ -1045,8 +1046,8 @@ export class LongshotSettingTab extends PluginSettingTab {
 			});
 
 		new Setting(parent)
-			.setName("导出格式")
-			.setDesc("PDF；JPG 体积小（推荐）；PNG 无损但文件很大。长截图 + PDF 会得到不切分的超长页面。")
+			.setName(t("导出格式"))
+			.setDesc(t("PDF；JPG 体积小（推荐）；PNG 无损但文件很大。长截图 + PDF 会得到不切分的超长页面。"))
 			.addDropdown((dropdown) => {
 				dropdown.addOptions(EXPORT_FORMAT_LABELS as Record<ExportFormat, string>);
 				dropdown.setValue(settings.exportFormat);
@@ -1059,8 +1060,8 @@ export class LongshotSettingTab extends PluginSettingTab {
 
 		if (settings.exportFormat !== "png") {
 			new Setting(parent)
-				.setName("JPEG 质量")
-				.setDesc("0.92 左右比较均衡。")
+				.setName(t("JPEG 质量"))
+				.setDesc(t("0.92 左右比较均衡。"))
 				.addSlider((slider) => {
 					slider.setLimits(0.6, 1, 0.01);
 					slider.setValue(settings.jpegQuality);
@@ -1073,10 +1074,10 @@ export class LongshotSettingTab extends PluginSettingTab {
 		}
 
 		new Setting(parent)
-			.setName("输出位置")
-			.setDesc(`导出文件的保存文件夹。当前：${describeTarget(resolveOutputTarget(settings, null), null)}`)
+			.setName(t("输出位置"))
+			.setDesc(t("导出文件的保存文件夹。当前：{0}", describeTarget(resolveOutputTarget(settings, null), null)))
 			.addButton((button) => {
-				button.setButtonText("选择文件夹…").onClick(async () => {
+				button.setButtonText(t("选择文件夹…")).onClick(async () => {
 					if (await this.plugin.chooseOutputDir()) {
 						this.display();
 					}
@@ -1085,7 +1086,7 @@ export class LongshotSettingTab extends PluginSettingTab {
 			.addExtraButton((button) => {
 				button
 					.setIcon("rotate-ccw")
-					.setTooltip("恢复为「跟随笔记所在目录」")
+					.setTooltip(t("恢复为「跟随笔记所在目录」"))
 					.onClick(async () => {
 						settings.outputDir = "";
 						await this.plugin.saveSettings();
@@ -1094,8 +1095,8 @@ export class LongshotSettingTab extends PluginSettingTab {
 			});
 		this.addText(
 			parent,
-			"文件名模板",
-			"可用变量：{{name}} 笔记名、{{date}} 日期、{{time}} 时间。",
+			t("文件名模板"),
+			t("可用变量：{{name}} 笔记名、{{date}} 日期、{{time}} 时间。"),
 			() => settings.fileTemplate,
 			(v) => (settings.fileTemplate = v),
 			"{{name}}"
@@ -1103,10 +1104,10 @@ export class LongshotSettingTab extends PluginSettingTab {
 
 		// ── 重置 ─────────────────────────────────────────────
 		new Setting(parent)
-			.setName("恢复默认设置")
-			.setDesc("把上面的所有选项重置为插件的默认值。")
+			.setName(t("恢复默认设置"))
+			.setDesc(t("把上面的所有选项重置为插件的默认值。"))
 			.addButton((button) => {
-				button.setButtonText("恢复默认");
+				button.setButtonText(t("恢复默认"));
 				button.setWarning();
 				button.onClick(async () => {
 					this.plugin.settings = { ...this.plugin.defaults };
@@ -1200,7 +1201,7 @@ export class LongshotSettingTab extends PluginSettingTab {
 		new Setting(parent)
 			.setName(name)
 			.addDropdown((dropdown) => {
-				dropdown.addOptions({ left: "左对齐", center: "居中", right: "右对齐" } as Record<AlignMode, string>);
+				dropdown.addOptions({ left: t("左对齐"), center: t("居中"), right: t("右对齐") } as Record<AlignMode, string>);
 				dropdown.setValue(get());
 				dropdown.onChange(async (value) => {
 					set(value as AlignMode);

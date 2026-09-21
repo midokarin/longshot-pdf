@@ -1,3 +1,4 @@
+import { t, listSeparator } from "./i18n";
 import { App, FuzzySuggestModal, Notice, Plugin, TFile, TFolder } from "obsidian";
 import { createBlankRowFinder } from "./blankrow";
 import { collectBlocks, type BlockIndex } from "./blocks";
@@ -98,33 +99,33 @@ export default class LongshotPdfPlugin extends Plugin {
 		await this.loadSettings();
 		this.addSettingTab(new LongshotSettingTab(this.app, this));
 
-		this.addRibbonIcon("camera", "长截图导出（打开设置面板）", () => {
+		this.addRibbonIcon("camera", t("长截图导出（打开设置面板）"), () => {
 			this.openExportModal();
 		});
 
 		this.addCommand({
 			id: "export-pdf",
-			name: "长截图 → 分页 → 导出 PDF",
+			name: t("长截图 → 分页 → 导出 PDF"),
 			checkCallback: (checking) => this.commandGuard(checking, "pdf"),
 		});
 		this.addCommand({
 			id: "export-page-images",
-			name: `长截图 → 分页 → 导出每页图片（JPG / PNG）`,
+			name: t("长截图 → 分页 → 导出每页图片（JPG / PNG）"),
 			checkCallback: (checking) => this.commandGuard(checking, "pages"),
 		});
 		this.addCommand({
 			id: "save-long-image",
-			name: "只生成长截图（JPG / PNG）",
+			name: t("只生成长截图（JPG / PNG）"),
 			checkCallback: (checking) => this.commandGuard(checking, "long"),
 		});
 		this.addCommand({
 			id: "save-long-pdf",
-			name: "长截图 → 单页 PDF（不切分）",
+			name: t("长截图 → 单页 PDF（不切分）"),
 			checkCallback: (checking) => this.commandGuard(checking, "longPdf"),
 		});
 		this.addCommand({
 			id: "preview-pagination",
-			name: "长截图 → 分页预览（可手动调整断点）",
+			name: t("长截图 → 分页预览（可手动调整断点）"),
 			checkCallback: (checking) => {
 				const file = this.app.workspace.getActiveFile();
 				if (!file || file.extension !== "md") return false;
@@ -134,7 +135,7 @@ export default class LongshotPdfPlugin extends Plugin {
 		});
 		this.addCommand({
 			id: "batch-export-folder",
-			name: "批量导出：当前笔记所在文件夹（含子文件夹）",
+			name: t("批量导出：当前笔记所在文件夹（含子文件夹）"),
 			checkCallback: (checking) => {
 				const file = this.app.workspace.getActiveFile();
 				const folder = file?.parent;
@@ -145,7 +146,7 @@ export default class LongshotPdfPlugin extends Plugin {
 		});
 		this.addCommand({
 			id: "verify-hidden-watermark",
-			name: "读取图片里的隐水印（校验）",
+			name: t("读取图片里的隐水印（校验）"),
 			callback: () => {
 				new PngFileSuggest(this.app, (file) => void this.verifyHiddenWatermark(file)).open();
 			},
@@ -156,7 +157,7 @@ export default class LongshotPdfPlugin extends Plugin {
 				if (file instanceof TFolder) {
 					menu.addItem((item) =>
 						item
-							.setTitle("长截图：导出该文件夹为 PDF")
+							.setTitle(t("长截图：导出该文件夹为 PDF"))
 							.setIcon("camera")
 							.onClick(() => void this.runBatchExport(file, "pdf"))
 					);
@@ -165,7 +166,7 @@ export default class LongshotPdfPlugin extends Plugin {
 				if (file instanceof TFile && file.extension === "md") {
 					menu.addItem((item) =>
 						item
-							.setTitle("长截图：导出这篇笔记")
+							.setTitle(t("长截图：导出这篇笔记"))
 							.setIcon("camera")
 							.onClick(() => void this.runExport(resolveExportMode(this.settings), file))
 					);
@@ -188,7 +189,7 @@ export default class LongshotPdfPlugin extends Plugin {
 	/** 侧边栏图标：先弹出快速设置面板，确认后再导出 */
 	openExportModal(): void {
 		if (this.busy) {
-			new Notice("已有导出任务在进行中，请稍候");
+			new Notice(t("已有导出任务在进行中，请稍候"));
 			return;
 		}
 		new ExportOptionsModal(this.app, this).open();
@@ -206,14 +207,14 @@ export default class LongshotPdfPlugin extends Plugin {
 		let picked: string | null;
 		try {
 			picked = await pickFolder({
-				title: "选择导出位置",
+				title: t("选择导出位置"),
 				defaultPath:
 					this.settings.outputDir && target.kind === "fs"
 						? target.folder
 						: vaultRootPath(this.app),
 			});
 		} catch (error) {
-			new Notice(`打不开系统文件夹选择框：${describeError(error)}`);
+			new Notice(t("打不开系统文件夹选择框：{0}", describeError(error)));
 			return false;
 		}
 		if (!picked) {
@@ -221,7 +222,7 @@ export default class LongshotPdfPlugin extends Plugin {
 		}
 		this.settings.outputDir = picked;
 		await this.saveSettings();
-		new Notice(`导出位置已设为\n${picked}`);
+		new Notice(t("导出位置已设为\n{0}", picked));
 		return true;
 	}
 
@@ -237,11 +238,11 @@ export default class LongshotPdfPlugin extends Plugin {
 		let picked: string | null;
 		try {
 			picked = await pickImageFile({
-				title: which === "watermark" ? "选择水印图片" : "选择头像图片",
+				title: which === "watermark" ? t("选择水印图片") : t("选择头像图片"),
 				defaultPath: vaultRootPath(this.app),
 			});
 		} catch (error) {
-			new Notice(`打不开系统文件选择框：${describeError(error)}`);
+			new Notice(t("打不开系统文件选择框：{0}", describeError(error)));
 			return false;
 		}
 		if (!picked) {
@@ -253,7 +254,7 @@ export default class LongshotPdfPlugin extends Plugin {
 			this.settings.authorAvatarPath = picked;
 		}
 		await this.saveSettings();
-		new Notice(`已选用图片\n${picked}`);
+		new Notice(t("已选用图片\n{0}", picked));
 		return true;
 	}
 
@@ -261,11 +262,11 @@ export default class LongshotPdfPlugin extends Plugin {
 	async runExport(mode: ExportMode, target?: TFile): Promise<void> {
 		const file = target ?? this.app.workspace.getActiveFile();
 		if (!file || file.extension !== "md") {
-			new Notice("请先打开一篇 Markdown 笔记");
+			new Notice(t("请先打开一篇 Markdown 笔记"));
 			return;
 		}
 		if (this.busy) {
-			new Notice("已有导出任务在进行中，请稍候");
+			new Notice(t("已有导出任务在进行中，请稍候"));
 			return;
 		}
 		this.busy = true;
@@ -281,14 +282,14 @@ export default class LongshotPdfPlugin extends Plugin {
 				update: (message) => progress.update(message),
 				confirmPending: (pending) =>
 					confirmDialog(this.app, {
-						title: "渲染可能还没完成",
-						message: `等待超时，仍未完成：${pending.join("、")}。\n现在导出这些内容可能显示不完整。`,
-						confirmText: "仍然导出",
-						cancelText: "取消导出",
+						title: t("渲染可能还没完成"),
+						message: t("等待超时，仍未完成：{0}。\n现在导出这些内容可能显示不完整。", pending.join(listSeparator)),
+						confirmText: t("仍然导出"),
+						cancelText: t("取消导出"),
 					}),
 			});
 			if (!ctx) {
-				progress.finish("已取消导出");
+				progress.finish(t("已取消导出"));
 				return;
 			}
 			try {
@@ -311,11 +312,11 @@ export default class LongshotPdfPlugin extends Plugin {
 	async openPreview(): Promise<void> {
 		const file = this.app.workspace.getActiveFile();
 		if (!file || file.extension !== "md") {
-			new Notice("请先打开一篇 Markdown 笔记");
+			new Notice(t("请先打开一篇 Markdown 笔记"));
 			return;
 		}
 		if (this.busy) {
-			new Notice("已有导出任务在进行中，请稍候");
+			new Notice(t("已有导出任务在进行中，请稍候"));
 			return;
 		}
 		this.busy = true;
@@ -332,7 +333,7 @@ export default class LongshotPdfPlugin extends Plugin {
 				update: (message) => progress.update(message),
 			});
 			if (!ctx) {
-				progress.finish("已取消导出");
+				progress.finish(t("已取消导出"));
 				return;
 			}
 			try {
@@ -359,7 +360,7 @@ export default class LongshotPdfPlugin extends Plugin {
 					capacity: ctx.geometry.capacitySrcPx,
 				});
 				if (!slices) {
-					progress.finish("已取消导出");
+					progress.finish(t("已取消导出"));
 					return;
 				}
 				const outcome = await this.writeExport(ctx, slices, {
@@ -380,19 +381,19 @@ export default class LongshotPdfPlugin extends Plugin {
 	/** 批量导出文件夹里的所有笔记（串行，位图导出吃内存不能并发） */
 	async runBatchExport(folder: TFolder, mode: ExportMode): Promise<void> {
 		if (this.busy) {
-			new Notice("已有导出任务在进行中，请稍候");
+			new Notice(t("已有导出任务在进行中，请稍候"));
 			return;
 		}
 		const files = collectMarkdownFiles(folder);
 		if (files.length === 0) {
-			new Notice(`「${folder.name}」里没有 Markdown 笔记`);
+			new Notice(t("「{0}」里没有 Markdown 笔记", folder.name));
 			return;
 		}
 		if (files.length > 100) {
 			const ok = await confirmDialog(this.app, {
-				title: "批量导出",
-				message: `「${folder.name}」及其子文件夹里有 ${files.length} 篇笔记，导出过程无法中断。确定继续吗？`,
-				confirmText: "开始导出",
+				title: t("批量导出"),
+				message: t("「{0}」及其子文件夹里有 {1} 篇笔记，导出过程无法中断。确定继续吗？", folder.name, files.length),
+				confirmText: t("开始导出"),
 			});
 			if (!ok) return;
 		}
@@ -403,14 +404,14 @@ export default class LongshotPdfPlugin extends Plugin {
 			applyModeToSettings(settings, mode);
 			void this.saveSettings();
 		}
-		const progress = new ProgressNotice(`Longshot PDF · 批量导出（${files.length} 篇）`);
+		const progress = new ProgressNotice(t("Longshot PDF · 批量导出（{0} 篇）", files.length));
 		const outcomes: ExportOutcome[] = [];
 		const failures: string[] = [];
 		try {
 			for (let i = 0; i < files.length; i++) {
 				const file = files[i];
-				const prefix = `第 ${i + 1}/${files.length} 篇 · ${file.basename}`;
-				progress.update(`${prefix}\n正在渲染…`);
+				const prefix = t("第 {0}/{1} 篇 · {2}", i + 1, files.length, file.basename);
+				progress.update(t("{0}\n正在渲染…", prefix));
 				try {
 					const ctx = await this.prepareExport(file, mode, {
 						update: (message) => progress.update(`${prefix}\n${message}`),
@@ -426,15 +427,15 @@ export default class LongshotPdfPlugin extends Plugin {
 						ctx.dispose();
 					}
 				} catch (error) {
-					console.error("[longshot-pdf] 批量导出失败", file.path, error);
+					console.error(t("[longshot-pdf] 批量导出失败"), file.path, error);
 					failures.push(`${file.basename}：${describeError(error)}`);
 				}
 			}
 
-			const lines: string[] = [`已导出 ${outcomes.length}/${files.length} 篇`];
+			const lines: string[] = [t("已导出 {0}/{1} 篇", outcomes.length, files.length)];
 			if (failures.length > 0) {
-				lines.push(`失败 ${failures.length} 篇：`, ...failures.slice(0, 3));
-				if (failures.length > 3) lines.push(`… 另有 ${failures.length - 3} 篇失败，详见控制台`);
+				lines.push(t("失败 {0} 篇：", failures.length), ...failures.slice(0, 3));
+				if (failures.length > 3) lines.push(t("… 另有 {0} 篇失败，详见控制台", failures.length - 3));
 			}
 			progress.finish(lines.join("\n"), 12000);
 		} finally {
@@ -451,18 +452,18 @@ export default class LongshotPdfPlugin extends Plugin {
 			canvas.width = image.naturalWidth;
 			canvas.height = image.naturalHeight;
 			const ctx = canvas.getContext("2d", { willReadFrequently: true });
-			if (!ctx) throw new Error("无法创建画布上下文");
+			if (!ctx) throw new Error(t("无法创建画布上下文"));
 			ctx.drawImage(image, 0, 0);
 			const text = extractHiddenWatermark(canvas);
 			canvas.width = 0;
 			canvas.height = 0;
 			if (text === null) {
-				new Notice(`${file.name}\n没有读到隐水印（可能被压缩过，或导出时未开启）`);
+				new Notice(t("{0}\n没有读到隐水印（可能被压缩过，或导出时未开启）", file.name));
 				return;
 			}
-			new Notice(`${file.name}\n隐水印内容：\n${text}`, 12000);
+			new Notice(t("{0}\n隐水印内容：\n{1}", file.name, text), 12000);
 		} catch (error) {
-			new Notice(`读取失败：${describeError(error)}`);
+			new Notice(t("读取失败：{0}", describeError(error)));
 		}
 	}
 
@@ -476,7 +477,7 @@ export default class LongshotPdfPlugin extends Plugin {
 		const warnings: string[] = [];
 		const vars = { ...templateVars(file), title: file.basename, author: settings.authorName.trim() };
 
-		hooks.update("正在加载水印 / 头像图片…");
+		hooks.update(t("正在加载水印 / 头像图片…"));
 		const watermarkImage = hasWatermark(settings)
 			? await loadImage(this.app, settings.watermarkImagePath, (message) => warnings.push(message))
 			: null;
@@ -484,7 +485,7 @@ export default class LongshotPdfPlugin extends Plugin {
 			? await loadImage(this.app, settings.authorAvatarPath, (message) => warnings.push(message))
 			: null;
 
-		hooks.update("正在按阅读视图渲染笔记…");
+		hooks.update(t("正在按阅读视图渲染笔记…"));
 		const offscreen: OffscreenRender = await renderPreviewOffscreen(this.app, file, {
 			contentWidth: settings.contentWidth,
 			theme: settings.renderTheme,
@@ -505,7 +506,7 @@ export default class LongshotPdfPlugin extends Plugin {
 				}
 			}
 
-			hooks.update("正在截取长图…");
+			hooks.update(t("正在截取长图…"));
 			const backgroundColor =
 				settings.captureBackground === "paper"
 					? settings.paperColor
@@ -520,12 +521,12 @@ export default class LongshotPdfPlugin extends Plugin {
 					blocks: offscreen.sizer,
 					onProgress: (done, totalCount, label) =>
 						hooks.update(
-							label === "整页截取" ? "正在截取长图…" : `正在截取长图 ${done}/${totalCount}…`
+							label === t("整页截取") ? t("正在截取长图…") : t("正在截取长图 {0}/{1}…", done, totalCount)
 						),
 				}
 			);
 
-			hooks.update("正在计算分页…");
+			hooks.update(t("正在计算分页…"));
 			const geometry = computeGeometry(settings, capture.canvas.width);
 			const blocks = collectBlocks(offscreen.sizer, offscreen.stage, capture.scale);
 			const { slices, hardSplits } = paginate({
@@ -580,7 +581,7 @@ export default class LongshotPdfPlugin extends Plugin {
 			? fillTemplate(settings.hiddenWatermarkText, ctx.vars).trim()
 			: "";
 		if (hiddenText && imageFormat !== "png" && mode !== "pdf") {
-			warnings.push("隐水印只对 PNG 可靠，JPEG 压缩会破坏它");
+			warnings.push(t("隐水印只对 PNG 可靠，JPEG 压缩会破坏它"));
 		}
 
 		const target = resolveOutputTarget(settings, file);
@@ -589,7 +590,7 @@ export default class LongshotPdfPlugin extends Plugin {
 		const paper = { widthMm: geometry.paperWidthMm, heightMm: geometry.paperHeightMm };
 
 		if (mode === "long" || mode === "longPdf") {
-			hooks.update("正在保存长截图…");
+			hooks.update(t("正在保存长截图…"));
 			const dpi = Math.max(72, capture.scale * 96);
 			const decorated = renderLongImage(capture.canvas, {
 				watermark: buildWatermarkSpec(settings, dpi, ctx.vars, ctx.watermarkImage),
@@ -599,7 +600,7 @@ export default class LongshotPdfPlugin extends Plugin {
 			});
 			try {
 				if (hiddenText && !embedHiddenWatermark(decorated, hiddenText)) {
-					warnings.push("隐水印写入失败（画布过小或像素不可读）");
+					warnings.push(t("隐水印写入失败（画布过小或像素不可读）"));
 				}
 				const data =
 					mode === "long"
@@ -634,7 +635,7 @@ export default class LongshotPdfPlugin extends Plugin {
 		let hiddenFailed = false;
 		try {
 			for (let i = 0; i < total; i++) {
-				hooks.update(`正在排版第 ${i + 1}/${total} 页…`);
+				hooks.update(t("正在排版第 {0}/{1} 页…", i + 1, total));
 				const vars = { ...ctx.vars, page: String(i + 1), pages: String(total) };
 				const page = renderPage(
 					capture.canvas,
@@ -651,11 +652,11 @@ export default class LongshotPdfPlugin extends Plugin {
 				await nextFrame();
 			}
 			if (hiddenFailed) {
-				warnings.push("隐水印写入失败（画布过小或像素不可读）");
+				warnings.push(t("隐水印写入失败（画布过小或像素不可读）"));
 			}
 
 			if (mode === "pdf") {
-				hooks.update("正在生成 PDF…");
+				hooks.update(t("正在生成 PDF…"));
 				// 隐水印写在像素最低位，只有无损页面能保住它
 				const pdfFormat = hiddenText ? "png" : imageFormat;
 				const buffer = await buildPdf(pages, {
@@ -664,7 +665,7 @@ export default class LongshotPdfPlugin extends Plugin {
 					format: pdfFormat,
 					jpegQuality: settings.jpegQuality,
 					outline: settings.pdfOutline ? buildOutline(ctx.blocks, slices) : undefined,
-					onProgress: (done, count) => hooks.update(`正在写入 PDF ${done}/${count}…`),
+					onProgress: (done, count) => hooks.update(t("正在写入 PDF {0}/{1}…", done, count)),
 				});
 				saved.push(
 					await writeBinary(this.app, target, buildFileName(settings, file, "pdf"), buffer)
@@ -672,7 +673,7 @@ export default class LongshotPdfPlugin extends Plugin {
 			} else {
 				const digits = Math.max(2, String(pages.length).length);
 				for (let i = 0; i < pages.length; i++) {
-					hooks.update(`正在保存分页图片 ${i + 1}/${pages.length}…`);
+					hooks.update(t("正在保存分页图片 {0}/{1}…", i + 1, pages.length));
 					const suffix = `-p${String(i + 1).padStart(digits, "0")}`;
 					const name = buildFileName(settings, file, imageExt, suffix);
 					saved.push(
@@ -709,25 +710,25 @@ export default class LongshotPdfPlugin extends Plugin {
 		if (outcomes.length === 1) {
 			const outcome = outcomes[0];
 			lines.push(
-				`共 ${outcome.pages} 页，纸张 ${outcome.paperWidthMm} × ${outcome.paperHeightMm} mm`
+				t("共 {0} 页，纸张 {1} × {2} mm", outcome.pages, outcome.paperWidthMm, outcome.paperHeightMm)
 			);
 			if (outcome.hardSplits > 0) {
-				lines.push(`其中 ${outcome.hardSplits} 处因块过长被切分，可在设置里调整内容宽度或页边距`);
+				lines.push(t("其中 {0} 处因块过长被切分，可在设置里调整内容宽度或页边距", outcome.hardSplits));
 			}
 			lines.push(...outcome.saved.slice(0, 5));
 			if (outcome.saved.length > 5) {
-				lines.push(`… 另有 ${outcome.saved.length - 5} 个文件`);
+				lines.push(t("… 另有 {0} 个文件", outcome.saved.length - 5));
 			}
 			if (outcome.warnings.length > 0) {
-				lines.push(`提示：${outcome.warnings[0]}`);
+				lines.push(t("提示：{0}", outcome.warnings[0]));
 			}
 			return lines.join("\n");
 		}
 		const totalPages = outcomes.reduce((sum, outcome) => sum + outcome.pages, 0);
-		lines.push(`已导出 ${outcomes.length} 篇，共 ${totalPages} 页`);
+		lines.push(t("已导出 {0} 篇，共 {1} 页", outcomes.length, totalPages));
 		const warnings = outcomes.flatMap((outcome) => outcome.warnings);
 		if (warnings.length > 0) {
-			lines.push(`提示：${warnings[0]}${warnings.length > 1 ? `（共 ${warnings.length} 条）` : ""}`);
+			lines.push(t("提示：{0}{1}", warnings[0], warnings.length > 1 ? t("（共 {0} 条）", warnings.length) : ""));
 		}
 		return lines.join("\n");
 	}
@@ -759,7 +760,7 @@ function blobToImage(blob: Blob): Promise<HTMLImageElement> {
 		};
 		image.onerror = () => {
 			URL.revokeObjectURL(url);
-			reject(new Error("图片解码失败"));
+			reject(new Error(t("图片解码失败")));
 		};
 		image.src = url;
 	});
@@ -769,7 +770,7 @@ function blobToImage(blob: Blob): Promise<HTMLImageElement> {
 class PngFileSuggest extends FuzzySuggestModal<TFile> {
 	constructor(app: App, private readonly onPick: (file: TFile) => void) {
 		super(app);
-		this.setPlaceholder("选择要校验的 PNG 图片…");
+		this.setPlaceholder(t("选择要校验的 PNG 图片…"));
 	}
 
 	getItems(): TFile[] {

@@ -1,3 +1,4 @@
+import { t } from "./i18n";
 import { domToCanvas, type Options as ScreenshotOptions } from "modern-screenshot";
 import { delay, nextFrame } from "./utils";
 
@@ -80,7 +81,7 @@ export function planCapture(
 	}
 	if (!fits(scale)) {
 		throw new Error(
-			`笔记内容过长（约 ${Math.round(heightCss)} px），超出 canvas 上限，无法一次性截取`
+			t("笔记内容过长（约 {0} px），超出 canvas 上限，无法一次性截取", Math.round(heightCss))
 		);
 	}
 
@@ -246,7 +247,7 @@ export async function captureViewport(
 ): Promise<CaptureResult> {
 	const widthCss = Math.round(stage.getBoundingClientRect().width);
 	if (widthCss <= 0 || heightCss <= 0) {
-		throw new Error("截图区域尺寸异常，无法截取");
+		throw new Error(t("截图区域尺寸异常，无法截取"));
 	}
 
 	const plan = planCapture(opts.scale, widthCss, heightCss, opts.chunkHeightCss);
@@ -255,7 +256,7 @@ export async function captureViewport(
 	canvas.height = plan.heightPx;
 	const ctx = canvas.getContext("2d");
 	if (!ctx) {
-		throw new Error("无法创建 canvas 上下文");
+		throw new Error(t("无法创建 canvas 上下文"));
 	}
 	if (opts.backgroundColor) {
 		ctx.fillStyle = opts.backgroundColor;
@@ -263,13 +264,13 @@ export async function captureViewport(
 	}
 
 	if (!plan.chunked) {
-		opts.onProgress?.(0, 1, "整页截取");
+		opts.onProgress?.(0, 1, t("整页截取"));
 		stage.style.height = `${Math.ceil(heightCss)}px`;
 		shiftContent(content, 0);
 		await nextFrame();
 		const shot = await domToCanvas(stage, shotOptions(opts, widthCss, heightCss, plan.scale));
 		ctx.drawImage(shot, 0, 0, canvas.width, canvas.height);
-		opts.onProgress?.(1, 1, "整页截取");
+		opts.onProgress?.(1, 1, t("整页截取"));
 		return { canvas, scale: plan.scale, widthCss, heightCss };
 	}
 
@@ -298,7 +299,7 @@ export async function captureViewport(
 		shot.width = 0;
 		shot.height = 0;
 		done += 1;
-		opts.onProgress?.(done, plan.chunkCount, `分块截图 ${done}/${plan.chunkCount}`);
+		opts.onProgress?.(done, plan.chunkCount, t("分块截图 {0}/{1}", done, plan.chunkCount));
 	}
 	shiftContent(content, 0);
 	return { canvas, scale: plan.scale, widthCss, heightCss };
@@ -340,7 +341,7 @@ function blobToDataUrl(blob: Blob): Promise<string> {
 	return new Promise((resolve, reject) => {
 		const reader = new FileReader();
 		reader.onload = () => resolve(String(reader.result));
-		reader.onerror = () => reject(reader.error ?? new Error("读取图片失败"));
+		reader.onerror = () => reject(reader.error ?? new Error(t("读取图片失败")));
 		reader.readAsDataURL(blob);
 	});
 }
@@ -379,18 +380,18 @@ export async function inlineImages(
 						window.setTimeout(done, 3000);
 					});
 				}
-				if (!img.naturalWidth) throw new Error("图片未加载");
+				if (!img.naturalWidth) throw new Error(t("图片未加载"));
 				const probe = document.createElement("canvas");
 				probe.width = img.naturalWidth;
 				probe.height = img.naturalHeight;
 				const pctx = probe.getContext("2d");
-				if (!pctx) throw new Error("无法创建 canvas");
+				if (!pctx) throw new Error(t("无法创建 canvas"));
 				pctx.drawImage(img, 0, 0);
 				const dataUrl = probe.toDataURL("image/png");
-				if (!dataUrl.startsWith("data:image")) throw new Error("导出 data URL 失败");
+				if (!dataUrl.startsWith("data:image")) throw new Error(t("导出 data URL 失败"));
 				img.setAttribute("src", dataUrl);
 			} catch (error) {
-				onWarn?.(`图片内嵌失败：${src}（${String(error)}）`);
+				onWarn?.(t("图片内嵌失败：{0}（{1}）", src, String(error)));
 			}
 		})
 	);
@@ -459,23 +460,23 @@ export function describePending(root: HTMLElement): string[] {
 	const mermaid = Array.from(root.querySelectorAll<HTMLElement>(".mermaid")).filter(
 		(el) => !el.querySelector("svg")
 	);
-	if (mermaid.length > 0) pending.push(`${mermaid.length} 个 Mermaid 图表`);
+	if (mermaid.length > 0) pending.push(t("{0} 个 Mermaid 图表", mermaid.length));
 
 	const math = Array.from(root.querySelectorAll<HTMLElement>(".math")).filter(
 		(el) => !el.querySelector("mjx-container") && (el.textContent ?? "").trim().length > 0
 	);
-	if (math.length > 0) pending.push(`${math.length} 处数学公式`);
+	if (math.length > 0) pending.push(t("{0} 处数学公式", math.length));
 
 	const images = Array.from(root.querySelectorAll("img")).filter(
 		(img) => !img.complete || img.naturalWidth === 0
 	);
-	if (images.length > 0) pending.push(`${images.length} 张图片`);
+	if (images.length > 0) pending.push(t("{0} 张图片", images.length));
 
 	const embeds = Array.from(root.querySelectorAll<HTMLElement>(".markdown-embed")).filter((el) => {
 		const body = el.querySelector(".markdown-embed-content");
 		return !body || body.children.length === 0;
 	});
-	if (embeds.length > 0) pending.push(`${embeds.length} 处嵌入笔记`);
+	if (embeds.length > 0) pending.push(t("{0} 处嵌入笔记", embeds.length));
 
 	return pending;
 }

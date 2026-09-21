@@ -1,3 +1,4 @@
+import { t } from "./i18n";
 import type { PageSlice } from "./paginate";
 import {
 	type AlignMode,
@@ -186,7 +187,7 @@ export function renderPage(
 	canvas.height = geo.pageHeightPx;
 	const ctx = canvas.getContext("2d");
 	if (!ctx) {
-		throw new Error("无法创建画布上下文");
+		throw new Error(t("无法创建画布上下文"));
 	}
 
 	ctx.fillStyle = spec.paperColor;
@@ -322,7 +323,7 @@ export function renderLongImage(
 	canvas.width = source.width;
 	canvas.height = source.height + band;
 	const ctx = canvas.getContext("2d");
-	if (!ctx) throw new Error("无法创建画布上下文");
+	if (!ctx) throw new Error(t("无法创建画布上下文"));
 
 	ctx.fillStyle = deco.paperColor;
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -418,7 +419,7 @@ export function renderPageThumbnail(
 	);
 	canvas.style.width = `${cssWidth}px`;
 	const ctx = canvas.getContext("2d");
-	if (!ctx) throw new Error("无法创建画布上下文");
+	if (!ctx) throw new Error(t("无法创建画布上下文"));
 
 	// 版面 px → 缩略图 px 的换算系数
 	const k = canvas.width / geo.pageWidthPx;

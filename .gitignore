@@ -10,3 +10,4 @@ HANDOVER.md
 *.log
 .env
 .env.*
+dev/i18n-harness.js

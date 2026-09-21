@@ -1,3 +1,4 @@
+import { t } from "./i18n";
 /** 系统原生文件夹选择框：桌面版 Obsidian 通过 Electron 的 dialog 实现 */
 
 interface OpenDialogResult {
@@ -45,7 +46,7 @@ export const IMAGE_EXTENSIONS = ["png", "jpg", "jpeg", "gif", "webp", "svg", "bm
 async function openDialog(options: Record<string, unknown>): Promise<string | null> {
 	const remote = loadRemote();
 	if (!remote?.dialog) {
-		throw new Error("当前环境打不开系统选择框（需要桌面版 Obsidian）");
+		throw new Error(t("当前环境打不开系统选择框（需要桌面版 Obsidian）"));
 	}
 	const result = await remote.dialog.showOpenDialog(remote.getCurrentWindow?.(), options);
 	if (!result || result.canceled || result.filePaths.length === 0) {
@@ -62,7 +63,7 @@ export async function pickFolder(options: {
 	return openDialog({
 		title: options.title,
 		defaultPath: options.defaultPath || undefined,
-		buttonLabel: "选择",
+		buttonLabel: t("选择"),
 		properties: ["openDirectory", "createDirectory"],
 	});
 }
@@ -75,8 +76,8 @@ export async function pickImageFile(options: {
 	return openDialog({
 		title: options.title,
 		defaultPath: options.defaultPath || undefined,
-		buttonLabel: "选用",
+		buttonLabel: t("选用"),
 		properties: ["openFile"],
-		filters: [{ name: "图片", extensions: IMAGE_EXTENSIONS }],
+		filters: [{ name: t("图片"), extensions: IMAGE_EXTENSIONS }],
 	});
 }

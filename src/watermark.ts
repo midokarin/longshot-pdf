@@ -1,3 +1,4 @@
+import { t } from "./i18n";
 import { AUTHOR_DESIGNS, designHeight, measureDesign, paintDesign } from "./author-design";
 import { App, TFile } from "obsidian";
 import { promises as fs } from "fs";
@@ -442,8 +443,8 @@ export function buildAuthorPreviewSpec(
 ): AuthorSpec {
 	return (
 		buildAuthorSpec(settings, dpi, vars, avatar) ?? {
-			name: "张三",
-			text: "2026 年 9 月 · 示例署名",
+			name: t("张三"),
+			text: t("2026 年 9 月 · 示例署名"),
 			avatar,
 			...authorStyleSpec(settings, dpi),
 		}
@@ -1016,7 +1017,7 @@ async function decodeImage(dataUrl: string): Promise<HTMLImageElement> {
 	} else {
 		await new Promise<void>((resolve, reject) => {
 			image.addEventListener("load", () => resolve(), { once: true });
-			image.addEventListener("error", () => reject(new Error("图片解码失败")), { once: true });
+			image.addEventListener("error", () => reject(new Error(t("图片解码失败"))), { once: true });
 		});
 	}
 	return image;
@@ -1044,13 +1045,13 @@ export async function loadImage(
 		}
 		const file = app.vault.getAbstractFileByPath(trimmed);
 		if (!(file instanceof TFile)) {
-			onWarn?.(`找不到图片：${trimmed}`);
+			onWarn?.(t("找不到图片：{0}", trimmed));
 			return null;
 		}
 		const bytes = new Uint8Array(await app.vault.readBinary(file));
 		return await decodeImage(bytesToDataUrl(bytes, file.path));
 	} catch (error) {
-		onWarn?.(`图片加载失败：${trimmed}（${String(error)}）`);
+		onWarn?.(t("图片加载失败：{0}（{1}）", trimmed, String(error)));
 		return null;
 	}
 }

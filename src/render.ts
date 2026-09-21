@@ -1,3 +1,4 @@
+import { t, listSeparator } from "./i18n";
 import { App, Component, MarkdownRenderer, MarkdownView, TFile } from "obsidian";
 import { PAGEBREAK_CLASS } from "./blocks";
 import { inlineImages, waitForRenderReady, waitForStableSize } from "./capture";
@@ -165,7 +166,7 @@ export async function renderPreviewOffscreen(
 		const settle = delay(Math.max(0, opts.settleDelayMs));
 		const ready = await waitForRenderReady(content, {
 			timeoutMs: Math.max(0, opts.renderTimeoutMs ?? 8000),
-			onProgress: (pending) => opts.onProgress?.(`等待渲染完成：${pending.join("、")}`),
+			onProgress: (pending) => opts.onProgress?.(t("等待渲染完成：{0}", pending.join(listSeparator))),
 		});
 		await settle;
 		await inlineImages(sizer, opts.onWarn);

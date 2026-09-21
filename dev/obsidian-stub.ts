@@ -61,7 +61,10 @@ export class Component {
 }
 export class MarkdownView {}
 export class Notice {
-	constructor(public readonly message: string) {}
+	static messages: string[] = [];
+	constructor(public message: string) { Notice.messages.push(message); }
+	setMessage(message: string): void { this.message = message; Notice.messages.push(message); }
+	hide(): void {}
 }
 export class Plugin {}
 export class FuzzySuggestModal {}
@@ -371,6 +374,7 @@ export class Modal {
 	containerEl: HTMLElement;
 	modalEl: HTMLElement;
 	contentEl: HTMLElement;
+	titleEl: HTMLElement;
 
 	constructor(public readonly app: unknown) {
 		this.containerEl = document.createElement("div");
@@ -379,6 +383,8 @@ export class Modal {
 		this.modalEl.className = "modal";
 		this.contentEl = document.createElement("div");
 		this.contentEl.className = "modal-content";
+		this.titleEl = document.createElement("h2");
+		this.modalEl.appendChild(this.titleEl);
 		this.modalEl.appendChild(this.contentEl);
 		this.containerEl.appendChild(this.modalEl);
 	}
@@ -395,4 +401,10 @@ export class Modal {
 
 	onOpen(): void {}
 	onClose(): void {}
+}
+
+/** Match Obsidian's language API; test pages can select a locale before importing. */
+export function getLanguage(): string {
+	if (localStorage.getItem("longshot-test-legacy-api")) throw new Error("Language API unavailable");
+	return localStorage.getItem("language") ?? "zh";
 }

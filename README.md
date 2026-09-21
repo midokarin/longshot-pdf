@@ -1,5 +1,7 @@
 # Longshot PDF
 
+简体中文 | [English](README.en.md)
+
 <picture>
   <source srcset="docs/images/logo-horizontal.svg" type="image/svg+xml">
   <img src="docs/images/logo.png" alt="Longshot PDF 标志" width="340">
@@ -65,6 +67,12 @@ Markdown 笔记 → 阅读视图渲染 → 长截图 → 分页或保留整图 �
 ```
 
 更新时，替换这三个文件，再关闭并重新开启插件。不要删除 `data.json`，里面保存着你的设置。
+
+### 界面语言
+
+插件跟随 Obsidian 的语言设置：中文环境显示简体中文，英文及其他语言环境显示英文。修改 Obsidian 的语言后，按提示重启应用即可。
+
+笔记正文、填写的水印文字、作者信息和自定义模板名称会保留原文。下面的截图展示的是中文界面，英文界面提供相同的功能。
 
 ## 开始使用
 

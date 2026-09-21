@@ -1,3 +1,4 @@
+import { t } from "./i18n";
 import { jsPDF } from "jspdf";
 import { MM_PER_INCH, nextFrame } from "./utils";
 
@@ -157,7 +158,7 @@ export function canvasToBlob(
 				if (blob) {
 					resolve(blob);
 				} else {
-					reject(new Error("导出图片失败"));
+					reject(new Error(t("导出图片失败")));
 				}
 			},
 			mime,

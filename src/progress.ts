@@ -1,3 +1,4 @@
+import { t } from "./i18n";
 import { Notice } from "obsidian";
 
 /** 单条可更新内容的进度提示，避免刷屏 */
@@ -39,6 +40,6 @@ export class ProgressNotice {
 		this.finished = true;
 		this.notice?.hide();
 		this.notice = null;
-		new Notice(`${this.title} 失败\n${message}`, 10000);
+		new Notice(t("{0} 失败\n{1}", this.title, message), 10000);
 	}
 }

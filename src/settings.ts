@@ -1,3 +1,4 @@
+import { t } from "./i18n";
 export type PaperId = "a4" | "a5" | "b5" | "letter" | "custom";
 export type QualityLevel = "high" | "medium" | "low";
 export type ImageFormat = "jpeg" | "png";
@@ -61,14 +62,14 @@ export type ExportFormat = "pdf" | "jpeg" | "png";
 export type ExportMode = "pdf" | "pages" | "long" | "longPdf";
 
 export const EXPORT_TYPE_LABELS: Record<ExportType, string> = {
-	paged: "自动分页（按纸张分页排版）",
-	long: "长截图（整篇拼成一张长图）",
+	paged: t("自动分页（按纸张分页排版）"),
+	long: t("长截图（整篇拼成一张长图）"),
 };
 
 export const EXPORT_FORMAT_LABELS: Record<ExportFormat, string> = {
 	pdf: "PDF",
-	jpeg: "JPG（体积小）",
-	png: "PNG（无损，文件大）",
+	jpeg: t("JPG（体积小）"),
+	png: t("PNG（无损，文件大）"),
 };
 
 /** 类型 + 格式 → 具体任务 */
@@ -117,81 +118,81 @@ export const PAPER_LABELS: Record<PaperId, string> = {
 	a5: "A5 (148 × 210 mm)",
 	b5: "B5 (176 × 250 mm)",
 	letter: "Letter (215.9 × 279.4 mm)",
-	custom: "自定义尺寸",
+	custom: t("自定义尺寸"),
 };
 
 export const QUALITY_LABELS: Record<QualityLevel, string> = {
-	high: "高 · 300 DPI",
-	medium: "中 · 200 DPI",
-	low: "低 · 150 DPI",
+	high: t("高 · 300 DPI"),
+	medium: t("中 · 200 DPI"),
+	low: t("低 · 150 DPI"),
 };
 
 export const WATERMARK_LAYOUT_LABELS: Record<WatermarkLayout, string> = {
-	tile: "整页平铺",
-	center: "单个",
+	tile: t("整页平铺"),
+	center: t("单个"),
 };
 
 export const WATERMARK_FONT_LABELS: Record<WatermarkFont, string> = {
-	sans: "中文 · 黑体（无衬线）",
-	serif: "中文 · 宋体",
-	kai: "中文 · 楷体",
-	fangsong: "中文 · 仿宋",
-	round: "中文 · 圆体",
-	mono: "中文 · 等宽黑体",
-	pingfang: "中文 · 苹方",
-	yahei: "中文 · 微软雅黑",
-	helvetica: "西文 · Helvetica / Arial",
-	verdana: "西文 · Verdana",
-	georgia: "西文 · Georgia",
-	garamond: "西文 · Garamond",
-	times: "西文 · Times New Roman",
-	courier: "西文 · Courier New",
-	optima: "西文 · Optima",
-	baskerville: "西文 · Baskerville",
-	didot: "西文 · Didot（高对比衬线）",
-	futura: "西文 · Futura（几何无衬线）",
-	avenir: "西文 · Avenir Next",
-	palatino: "西文 · Palatino",
-	menlo: "西文 · Menlo（等宽）",
+	sans: t("中文 · 黑体（无衬线）"),
+	serif: t("中文 · 宋体"),
+	kai: t("中文 · 楷体"),
+	fangsong: t("中文 · 仿宋"),
+	round: t("中文 · 圆体"),
+	mono: t("中文 · 等宽黑体"),
+	pingfang: t("中文 · 苹方"),
+	yahei: t("中文 · 微软雅黑"),
+	helvetica: t("西文 · Helvetica / Arial"),
+	verdana: t("西文 · Verdana"),
+	georgia: t("西文 · Georgia"),
+	garamond: t("西文 · Garamond"),
+	times: t("西文 · Times New Roman"),
+	courier: t("西文 · Courier New"),
+	optima: t("西文 · Optima"),
+	baskerville: t("西文 · Baskerville"),
+	didot: t("西文 · Didot（高对比衬线）"),
+	futura: t("西文 · Futura（几何无衬线）"),
+	avenir: t("西文 · Avenir Next"),
+	palatino: t("西文 · Palatino"),
+	menlo: t("西文 · Menlo（等宽）"),
 };
 
 export const AVATAR_SHAPE_LABELS: Record<AvatarShape, string> = {
-	circle: "圆形",
-	rounded: "圆角方形",
-	square: "正方形",
+	circle: t("圆形"),
+	rounded: t("圆角方形"),
+	square: t("正方形"),
 };
 
 export const AUTHOR_DECOR_LABELS: Record<AuthorDecor, string> = {
-	none: "无（纯文字落款）",
-	bar: "左侧竖条（引用感）",
-	rule: "上方细线（杂志感）",
-	card: "卡片底纹",
-	frame: "细边框（印章感）",
+	none: t("无（纯文字落款）"),
+	bar: t("左侧竖条（引用感）"),
+	rule: t("上方细线（杂志感）"),
+	card: t("卡片底纹"),
+	frame: t("细边框（印章感）"),
 };
 
 export const AUTHOR_NAME_WEIGHT_LABELS: Record<AuthorNameWeight, string> = {
-	400: "常规",
-	500: "中等",
-	600: "半粗",
-	700: "粗体",
+	400: t("常规"),
+	500: t("中等"),
+	600: t("半粗"),
+	700: t("粗体"),
 };
 
 export const AVATAR_FIT_LABELS: Record<AvatarFit, string> = {
-	cover: "裁剪填满（不变形，推荐）",
-	contain: "完整显示（四周留白）",
-	fill: "拉伸填满（会变形）",
+	cover: t("裁剪填满（不变形，推荐）"),
+	contain: t("完整显示（四周留白）"),
+	fill: t("拉伸填满（会变形）"),
 };
 
 export const WATERMARK_ANCHOR_LABELS: Record<WatermarkAnchor, string> = {
-	"top-left": "左上",
-	"top-center": "上中",
-	"top-right": "右上",
-	"middle-left": "左中",
-	"middle-center": "正中",
-	"middle-right": "右中",
-	"bottom-left": "左下",
-	"bottom-center": "下中",
-	"bottom-right": "右下",
+	"top-left": t("左上"),
+	"top-center": t("上中"),
+	"top-right": t("右上"),
+	"middle-left": t("左中"),
+	"middle-center": t("正中"),
+	"middle-right": t("右中"),
+	"bottom-left": t("左下"),
+	"bottom-center": t("下中"),
+	"bottom-right": t("右下"),
 };
 
 /** 作者信息里可以一键套用的样式（不含名字、附加文字、头像这些内容） */
@@ -253,7 +254,7 @@ export interface AuthorTemplate {
 export const AUTHOR_TEMPLATES: AuthorTemplate[] = [
 	{
 		id: "minimal",
-		name: "极简",
+		name: t("极简"),
 		builtin: true,
 		style: {
 			design: "minimal",
@@ -273,7 +274,7 @@ export const AUTHOR_TEMPLATES: AuthorTemplate[] = [
 	},
 	{
 		id: "classic",
-		name: "文艺",
+		name: t("文艺"),
 		builtin: true,
 		style: {
 			design: "literary",
@@ -293,7 +294,7 @@ export const AUTHOR_TEMPLATES: AuthorTemplate[] = [
 	},
 	{
 		id: "card",
-		name: "博客",
+		name: t("博客"),
 		builtin: true,
 		style: {
 			design: "blog",
@@ -313,7 +314,7 @@ export const AUTHOR_TEMPLATES: AuthorTemplate[] = [
 	},
 	{
 		id: "center",
-		name: "声波",
+		name: t("声波"),
 		builtin: true,
 		style: {
 			design: "podcast",
@@ -333,7 +334,7 @@ export const AUTHOR_TEMPLATES: AuthorTemplate[] = [
 	},
 	{
 		id: "mono",
-		name: "终端",
+		name: t("终端"),
 		builtin: true,
 		style: {
 			design: "terminal",
@@ -353,7 +354,7 @@ export const AUTHOR_TEMPLATES: AuthorTemplate[] = [
 	},
 	{
 		id: "bold",
-		name: "取景",
+		name: t("取景"),
 		builtin: true,
 		style: {
 			design: "photo",
@@ -373,7 +374,7 @@ export const AUTHOR_TEMPLATES: AuthorTemplate[] = [
 	},
 	{
 		id: "magazine",
-		name: "专栏",
+		name: t("专栏"),
 		builtin: true,
 		style: {
 			design: "newsletter",
@@ -393,7 +394,7 @@ export const AUTHOR_TEMPLATES: AuthorTemplate[] = [
 	},
 	{
 		id: "elegant",
-		name: "学术",
+		name: t("学术"),
 		builtin: true,
 		style: {
 			design: "research",
@@ -413,7 +414,7 @@ export const AUTHOR_TEMPLATES: AuthorTemplate[] = [
 	},
 	{
 		id: "ink",
-		name: "手账",
+		name: t("手账"),
 		builtin: true,
 		style: {
 			design: "journal",
@@ -433,7 +434,7 @@ export const AUTHOR_TEMPLATES: AuthorTemplate[] = [
 	},
 	{
 		id: "studio",
-		name: "设计",
+		name: t("设计"),
 		builtin: true,
 		style: {
 			design: "studio",
