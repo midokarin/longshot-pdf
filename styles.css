@@ -1,0 +1,680 @@
+/*
+ * 离屏渲染用的容器样式。
+ * 容器不能使用 display:none（那样浏览器不会真正布局），所以把它移出可视区域。
+ */
+.longshot-offscreen {
+	position: fixed;
+	top: 0;
+	left: -200000px;
+	z-index: -1;
+	pointer-events: none;
+}
+
+.longshot-stage {
+	width: var(--longshot-width, 800px);
+	overflow: hidden;
+	display: flow-root;
+}
+
+/* 预览容器：去掉 Obsidian 预览自带的页边距与行宽限制，页边距交给纸张设置来控制 */
+.longshot-offscreen .markdown-preview-view {
+	padding: 0 !important;
+	--file-margins: 0px;
+	overflow: visible !important;
+	display: flow-root;
+	min-height: 0 !important;
+	height: auto !important;
+}
+
+.longshot-offscreen .markdown-preview-sizer {
+	padding: 0 !important;
+	min-height: 0 !important;
+	max-width: none !important;
+	margin-left: 0 !important;
+	margin-right: 0 !important;
+}
+
+/* 笔记标题：主题若把内联标题隐藏了，这里强制显示，并沿用主题的排版变量 */
+.longshot-offscreen .inline-title {
+	display: block !important;
+	font-size: var(--inline-title-size, 1.8em);
+	font-weight: var(--inline-title-weight, 700);
+	font-style: var(--inline-title-style, normal);
+	line-height: var(--inline-title-line-height, 1.5);
+	margin-bottom: var(--inline-title-margin-bottom, 0.5em);
+	color: var(--inline-title-color, var(--text-normal));
+}
+
+/*
+ * 正文里单独一行 /// 会被渲染成这个零高度标记，用来量出强制分页的位置。
+ * 它必须不占据任何高度，否则会改变原本的排版。
+ */
+.longshot-pagebreak {
+	height: 0;
+	margin: 0;
+	padding: 0;
+	border: none;
+	overflow: hidden;
+}
+
+/* 交互元素不该出现在长截图里 */
+.longshot-offscreen .copy-code-button,
+.longshot-offscreen .edit-block-button,
+.longshot-offscreen .markdown-embed-link,
+.longshot-offscreen .collapse-indicator,
+.longshot-offscreen .heading-collapse-indicator,
+.longshot-offscreen .markdown-preview-pusher {
+	display: none !important;
+}
+
+/* ─ 快速设置弹窗 ───────────────────────────────────────── */
+.longshot-modal .longshot-modal-note {
+	margin: -0.5em 0 1em;
+	color: var(--text-muted);
+	font-size: var(--font-ui-small);
+}
+
+.longshot-modal .longshot-modal-warn {
+	color: var(--text-error);
+}
+
+.longshot-modal .longshot-modal-section.is-hidden {
+	display: none;
+}
+
+.longshot-modal .longshot-margin-item {
+	display: flex;
+	align-items: center;
+	gap: 0.3em;
+	margin-left: 0.6em;
+	color: var(--text-muted);
+	font-size: var(--font-ui-smaller);
+}
+
+.longshot-modal .longshot-margin-item input {
+	width: 3.6em;
+}
+
+.longshot-modal .longshot-number-input {
+	width: 6em;
+}
+
+.longshot-modal .longshot-modal-footer {
+	display: flex;
+	justify-content: flex-end;
+	gap: 0.6em;
+	margin-top: 1.4em;
+}
+
+.longshot-modal .longshot-modal-footer button:first-child {
+	margin-right: auto;
+}
+
+/* 快速设置里的「高级设置」折叠区 */
+.longshot-modal .longshot-advanced {
+	margin-top: 0.6em;
+	border-top: 1px solid var(--background-modifier-border);
+	padding-top: 0.6em;
+}
+
+.longshot-modal .longshot-advanced > summary {
+	cursor: pointer;
+	color: var(--text-muted);
+	font-size: var(--font-ui-small);
+	user-select: none;
+}
+
+.longshot-modal .longshot-advanced > summary:hover {
+	color: var(--text-normal);
+}
+
+.longshot-modal .longshot-advanced[open] > summary {
+	margin-bottom: 0.4em;
+}
+
+.longshot-modal .longshot-advanced-body .setting-item:first-child {
+	border-top: none;
+}
+
+/* ─ 设置页分栏 ─────────────────────────────────────────── */
+.longshot-settings .longshot-tabs {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.2em;
+	margin: 1em 0 0.5em;
+	border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.longshot-settings .longshot-tab {
+	display: flex;
+	align-items: center;
+	gap: 0.35em;
+	padding: 0.45em 0.8em 0.55em;
+	background: none;
+	border: none;
+	box-shadow: none;
+	color: var(--text-muted);
+	font-size: var(--font-ui-small);
+	cursor: pointer;
+}
+
+.longshot-settings .longshot-tab:hover {
+	color: var(--text-normal);
+	background: none;
+}
+
+.longshot-settings .longshot-tab.is-active {
+	color: var(--text-normal);
+	font-weight: 600;
+	box-shadow: inset 0 -2px 0 var(--interactive-accent);
+}
+
+.longshot-settings .longshot-tab-icon {
+	display: flex;
+	align-items: center;
+}
+
+.longshot-settings .longshot-tab-icon svg {
+	width: 1em;
+	height: 1em;
+}
+
+.longshot-settings .longshot-tab-body .setting-item:first-child {
+	border-top: none;
+}
+
+/* ─ 分页预览弹窗 ───────────────────────────────────────── */
+.longshot-preview .longshot-preview-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+	gap: 1em;
+	margin: 1em 0;
+	max-height: 60vh;
+	overflow-y: auto;
+	padding-right: 0.3em;
+}
+
+.longshot-preview .longshot-preview-card {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.4em;
+}
+
+.longshot-preview .longshot-preview-thumb {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	min-height: 120px;
+	padding: 0.4em;
+	box-sizing: border-box;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: var(--radius-s);
+	background: var(--background-secondary);
+}
+
+.longshot-preview .longshot-preview-thumb canvas {
+	max-width: 100%;
+	height: auto;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.longshot-preview .longshot-preview-label {
+	color: var(--text-muted);
+	font-size: var(--font-ui-smaller);
+}
+
+/* 这一页的内容比纸张还高，导出时会被裁掉 */
+.longshot-preview .longshot-preview-label.is-overflow {
+	color: var(--text-error);
+	font-weight: 600;
+}
+
+.longshot-preview .longshot-preview-controls {
+	display: flex;
+	gap: 0.3em;
+}
+
+.longshot-preview .longshot-preview-controls button {
+	padding: 0.15em 0.5em;
+	font-size: var(--font-ui-smaller);
+}
+
+.longshot-preview .longshot-preview-controls button:disabled {
+	opacity: 0.4;
+	cursor: default;
+}
+
+.longshot-preview .longshot-preview-controls button.is-hidden {
+	visibility: hidden;
+}
+
+.longshot-preview .longshot-preview-failed {
+	color: var(--text-error);
+	font-size: var(--font-ui-smaller);
+}
+
+/* ─ 水印分组的三个小卡片 ───────────────────────────────── */
+/* 三类水印（可见水印 / 作者信息 / 隐水印）各给一条彩色竖线，
+   展开后一眼能分清哪几行属于哪一类。 */
+.longshot-settings .longshot-group {
+	margin: 0.9em 0;
+	padding-left: 0.8em;
+	border-left: 3px solid var(--background-modifier-border);
+	border-radius: var(--radius-s);
+	background: var(--background-secondary);
+}
+
+.longshot-settings .longshot-group-visible {
+	border-left-color: var(--color-blue, #4c8bf5);
+}
+
+.longshot-settings .longshot-group-author {
+	border-left-color: var(--color-green, #3aa76d);
+}
+
+.longshot-settings .longshot-group-hidden {
+	border-left-color: var(--color-purple, #9a5cf5);
+}
+
+.longshot-settings .longshot-group-head {
+	display: flex;
+	align-items: center;
+	gap: 0.6em;
+	padding: 0.7em 0.8em 0.7em 0;
+}
+
+.longshot-settings .longshot-group-icon {
+	display: flex;
+	align-items: center;
+	flex-shrink: 0;
+	color: var(--text-muted);
+}
+
+.longshot-settings .longshot-group-icon svg {
+	width: 1.15em;
+	height: 1.15em;
+}
+
+.longshot-settings .longshot-group-visible .longshot-group-icon {
+	color: var(--color-blue, #4c8bf5);
+}
+
+.longshot-settings .longshot-group-author .longshot-group-icon {
+	color: var(--color-green, #3aa76d);
+}
+
+.longshot-settings .longshot-group-hidden .longshot-group-icon {
+	color: var(--color-purple, #9a5cf5);
+}
+
+.longshot-settings .longshot-group-text {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+.longshot-settings .longshot-group-title {
+	font-weight: 600;
+	color: var(--text-normal);
+}
+
+.longshot-settings .longshot-group-desc {
+	margin-top: 0.15em;
+	color: var(--text-muted);
+	font-size: var(--font-ui-smaller);
+	line-height: 1.4;
+}
+
+/* 标题行里的开关：去掉 Setting 自带的分隔线与内边距，只留控件 */
+.longshot-settings .longshot-group-toggle .setting-item {
+	display: flex;
+	justify-content: flex-end;
+	padding: 0;
+	border: none;
+}
+
+.longshot-settings .longshot-group-toggle .setting-item-info {
+	display: none;
+}
+
+.longshot-settings .longshot-group-body {
+	padding: 0 0.8em 0.4em 0;
+	border-top: 1px solid var(--background-modifier-border);
+}
+
+.longshot-settings .longshot-group-body .setting-item {
+	border-top: none;
+}
+
+.longshot-settings .longshot-group-body .setting-item:first-child {
+	padding-top: 0.8em;
+}
+
+.longshot-settings .longshot-group-note {
+	margin: 0.8em 0 0;
+	padding: 0.5em 0.7em;
+	border-radius: var(--radius-s);
+	background: var(--background-primary);
+	color: var(--text-muted);
+	font-size: var(--font-ui-smaller);
+	line-height: 1.5;
+}
+
+/* ─ 水印栏的左右分栏 ───────────────────────────────────── */
+/* 左：预览；右：设置项，自己带一条独立滚动条。
+   两栏用同一个高度上限：谁都不会比另一栏高出一大截，页面底部也就不会出现大片空白。 */
+.longshot-settings .longshot-split {
+	display: flex;
+	align-items: flex-start;
+	gap: 1.2em;
+	margin-top: 0.6em;
+}
+
+.longshot-settings .longshot-split-preview,
+.longshot-settings .longshot-split-settings {
+	max-height: min(72vh, 700px);
+	overflow-y: auto;
+	overscroll-behavior: contain;
+	scrollbar-width: thin;
+}
+
+.longshot-settings .longshot-split-preview {
+	flex: 0 0 auto;
+	width: 264px;
+}
+
+.longshot-settings .longshot-split-settings {
+	flex: 1 1 auto;
+	min-width: 0;
+	padding-right: 0.6em;
+}
+
+.longshot-settings .longshot-split-preview::-webkit-scrollbar,
+.longshot-settings .longshot-split-settings::-webkit-scrollbar {
+	width: 8px;
+}
+
+.longshot-settings .longshot-split-preview::-webkit-scrollbar-thumb,
+.longshot-settings .longshot-split-settings::-webkit-scrollbar-thumb {
+	border-radius: 4px;
+	background: var(--background-modifier-border);
+}
+
+.longshot-settings .longshot-split-settings .longshot-group:first-child {
+	margin-top: 0;
+}
+
+.longshot-settings .longshot-preview-stack {
+	display: flex;
+	flex-direction: column;
+}
+
+/* 没勾选任何一类水印时的占位提示 */
+.longshot-settings .longshot-preview-empty {
+	padding: 2.2em 1em;
+	border: 1px dashed var(--background-modifier-border);
+	border-radius: var(--radius-m);
+	color: var(--text-muted);
+	font-size: var(--font-ui-smaller);
+	line-height: 1.6;
+	text-align: center;
+}
+
+/* 设置页里用 is-hidden 显隐（modal 的那套规则管不到这里） */
+.longshot-settings .longshot-preview-stack > .is-hidden,
+.longshot-settings .longshot-preview-empty.is-hidden {
+	display: none;
+}
+
+/* 窗口太窄时改为上下排布，避免右边设置项被挤成一条缝 */
+@media (max-width: 720px) {
+	.longshot-settings .longshot-split {
+		flex-direction: column;
+	}
+
+	.longshot-settings .longshot-split-preview {
+		width: 100%;
+		max-height: none;
+		overflow-y: visible;
+	}
+
+	.longshot-settings .longshot-split-settings {
+		max-height: none;
+		overflow-y: visible;
+		padding-right: 0;
+	}
+}
+
+/* ─ 水印实时预览 ───────────────────────────────────────── */
+.longshot-settings .longshot-preview-box {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.5em;
+	margin: 0.9em 0 0.2em;
+	padding: 0.8em;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: var(--radius-m);
+	background: var(--background-primary);
+}
+
+.longshot-settings .longshot-preview-stack .longshot-preview-box:first-child {
+	margin-top: 0;
+}
+
+.longshot-settings .longshot-preview-canvas {
+	max-width: 100%;
+	height: auto;
+	border-radius: 2px;
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+
+.longshot-settings .longshot-preview-hint {
+	color: var(--text-muted);
+	font-size: var(--font-ui-smaller);
+	text-align: center;
+	line-height: 1.5;
+}
+
+/* 图片 / 头像路径输入框：窄一点，把位置让给右侧的按钮 */
+.longshot-settings .longshot-path-input {
+	flex: 1 1 6em;
+	width: auto;
+	min-width: 5em;
+	max-width: 16em;
+	font-family: var(--font-monospace);
+	font-size: var(--font-ui-smaller);
+}
+
+/*
+ * 右栏比较窄，而「水印图片 / 头像图片」这类一行的控制区里有输入框 + 选择 + 清除三个控件，
+ * 宽度需求超过整行。Obsidian 默认不换行，会把左侧说明列(.setting-item-info)挤到 0 宽，
+ * 说明文字只能在几乎为 0 的列里逐字往下排 → 该行被撑到几百 px，看起来就是一大段空白。
+ * 这里允许换行：放不下时控件整体落到下一行，说明始终有正常宽度。
+ */
+.longshot-settings .longshot-split-settings .setting-item {
+	flex-wrap: wrap;
+}
+
+.longshot-settings .longshot-split-settings .setting-item-info {
+	flex: 1 1 12em;
+}
+
+.longshot-settings .longshot-split-settings .setting-item-control {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+/* ─ 样式模板画廊 ───────────────────────────────────────── */
+.longshot-settings .longshot-templates {
+	margin: 0.9em 0 0.2em;
+	padding: 0.8em;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: var(--radius-m);
+	background: var(--background-primary);
+}
+
+
+
+.longshot-settings .longshot-template-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(9.5em, 1fr));
+	gap: 0.6em;
+}
+
+.longshot-settings .longshot-template-card {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: 0.3em;
+	padding: 0.4em;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: var(--radius-s);
+	background: var(--background-secondary);
+	cursor: pointer;
+	transition: border-color 120ms ease, box-shadow 120ms ease, transform 120ms ease;
+}
+
+.longshot-settings .longshot-template-card:hover {
+	border-color: var(--interactive-accent);
+	transform: translateY(-1px);
+}
+
+.longshot-settings .longshot-template-card.is-active {
+	border-color: var(--interactive-accent);
+	background: var(--background-primary);
+	box-shadow: inset 0 0 0 1px var(--interactive-accent);
+}
+
+/*
+ * 小样是画在「纸」上的署名，绘制时底是透明的。这里补一层浅色纸底，
+ * 否则在深色主题下（深色文字 + 透明底）什么都看不清。
+ */
+.longshot-settings .longshot-template-thumb {
+	display: block;
+	width: 100%;
+	height: auto;
+	border-radius: 3px;
+	background: #fdfdfd;
+	box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+}
+
+.longshot-settings .longshot-template-foot {
+	display: flex;
+	align-items: center;
+	gap: 0.35em;
+	font-size: var(--font-ui-smaller);
+	line-height: 1.4;
+}
+
+.longshot-settings .longshot-template-name {
+	flex: 1 1 auto;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	color: var(--text-normal);
+}
+
+.longshot-settings .longshot-template-tag {
+	flex: 0 0 auto;
+	padding: 0 0.35em;
+	border-radius: 999px;
+	background: var(--background-modifier-border);
+	color: var(--text-muted);
+	font-size: 0.85em;
+}
+
+.longshot-settings .longshot-template-remove {
+	flex: 0 0 auto;
+	padding: 0.1em;
+	color: var(--text-muted);
+	cursor: pointer;
+	background: none;
+	box-shadow: none;
+}
+
+.longshot-settings .longshot-template-remove:hover {
+	color: var(--text-error);
+}
+
+/* ─ 头像取景（拖拽裁剪） ────────────────────────────────── */
+.longshot-settings .longshot-crop {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 0.5em;
+	margin: 0.9em 0 0.2em;
+	padding: 0.8em;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: var(--radius-m);
+	background: var(--background-primary);
+}
+
+.longshot-settings .longshot-crop-title {
+	font-size: var(--font-ui-small);
+	font-weight: 600;
+}
+
+.longshot-settings .longshot-crop-desc {
+	color: var(--text-muted);
+	font-size: var(--font-ui-smaller);
+	line-height: 1.5;
+}
+
+/* 棋盘格底：透明区域和被裁掉的部分（半透明）一眼可分 */
+.longshot-settings .longshot-crop-stage {
+	position: relative;
+	align-self: center;
+	padding: 0.4em;
+	border-radius: var(--radius-s);
+	background-color: #f7f7f8;
+	background-image:
+		linear-gradient(45deg, rgba(0, 0, 0, 0.05) 25%, transparent 25%, transparent 75%, rgba(0, 0, 0, 0.05) 75%),
+		linear-gradient(45deg, rgba(0, 0, 0, 0.05) 25%, transparent 25%, transparent 75%, rgba(0, 0, 0, 0.05) 75%);
+	background-size: 12px 12px;
+	background-position: 0 0, 6px 6px;
+}
+
+.longshot-settings .longshot-crop-canvas {
+	display: block;
+	cursor: grab;
+	touch-action: none;
+}
+
+.longshot-settings .longshot-crop-canvas.is-dragging {
+	cursor: grabbing;
+}
+
+.longshot-settings .longshot-crop-hint {
+	margin-top: 0.35em;
+	color: var(--text-muted);
+	font-size: var(--font-ui-smaller);
+	text-align: center;
+}
+
+.longshot-settings .longshot-crop .setting-item {
+	width: 100%;
+	padding-top: 0.5em;
+}
+
+/* 折叠摘要始终可见，复杂控制按需展开。 */
+.longshot-settings .longshot-advanced > summary {
+	padding: 0.65em 0;
+	cursor: pointer;
+	font-weight: 500;
+}
+.longshot-settings .longshot-advanced > summary:focus-visible,
+.longshot-settings .longshot-template-card:focus-visible {
+	outline: 2px solid var(--interactive-accent);
+	outline-offset: 3px;
+}
+.longshot-settings .longshot-template-thumb {
+	/* 覆盖绘制器写入的固定 CSS 尺寸，让小样适应窄栏。 */
+	width: 100% !important;
+	height: auto !important;
+}
+.longshot-settings .longshot-template-grid {
+	grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+}

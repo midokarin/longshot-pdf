@@ -1,0 +1,9 @@
+{
+  "id": "longshot-pdf",
+  "name": "Longshot PDF",
+  "version": "0.1.0",
+  "minAppVersion": "1.4.0",
+  "description": "Export a note's preview as a pixel-perfect PDF: capture it as a long screenshot, then split and flow it onto styled pages with selectable paper size, margins, and header/footer.",
+  "author": "wyx",
+  "isDesktopOnly": true
+}

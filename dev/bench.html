@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="utf-8" />
+		<title>longshot-pdf 截图性能基准</title>
+		<link rel="stylesheet" href="../styles.css" />
+		<style>
+			body {
+				margin: 0;
+				padding: 24px;
+				background: #f2f3f5;
+				font-family: -apple-system, "PingFang SC", sans-serif;
+				color: #1f2329;
+			}
+			#log {
+				white-space: pre-wrap;
+				font: 12px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace;
+				background: #fff;
+				border: 1px solid #dfe2e6;
+				border-radius: 8px;
+				padding: 12px;
+			}
+			/* 模拟 Obsidian 阅读视图的排版 */
+			.longshot-offscreen .markdown-preview-view {
+				font-family: -apple-system, "PingFang SC", sans-serif;
+				font-size: 16px;
+				line-height: 1.6;
+				color: #1f2329;
+				background: #ffffff;
+			}
+			.longshot-offscreen h1 { font-size: 1.8em; margin: 28px 0 14px; }
+			.longshot-offscreen h2 { font-size: 1.45em; margin: 26px 0 12px; border-bottom: 1px solid #e6e8eb; padding-bottom: 6px; }
+			.longshot-offscreen h3 { font-size: 1.2em; margin: 22px 0 10px; }
+			.longshot-offscreen p { margin: 0 0 14px; }
+			.longshot-offscreen ul, .longshot-offscreen ol { margin: 0 0 14px; padding-left: 26px; }
+			.longshot-offscreen li { margin: 4px 0; }
+			.longshot-offscreen blockquote {
+				margin: 0 0 14px; padding: 6px 16px; border-left: 4px solid #b9c2cd;
+				background: #f7f8fa; color: #4c5560;
+			}
+			.longshot-offscreen pre {
+				margin: 0 0 14px; padding: 14px 16px; background: #f6f7f9;
+				border-radius: 6px; font: 13px/1.55 ui-monospace, Menlo, monospace; overflow: visible;
+			}
+			.longshot-offscreen table { border-collapse: collapse; margin: 0 0 14px; width: 100%; }
+			.longshot-offscreen th, .longshot-offscreen td { border: 1px solid #dcdfe3; padding: 8px 10px; font-size: 14px; }
+			.longshot-offscreen th { background: #f6f7f9; }
+			.longshot-offscreen img { max-width: 100%; }
+			.longshot-offscreen .callout {
+				margin: 0 0 14px; padding: 12px 16px; border-left: 4px solid #4a8cf7;
+				background: #eef4ff; border-radius: 4px;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>longshot-pdf 截图性能基准</h1>
+		<div id="log">运行中…</div>
+		<script type="module">
+			const logEl = document.getElementById("log");
+			const fail = (prefix) => (event) => {
+				const error = event.error ?? event.reason ?? event;
+				logEl.textContent = `${prefix}: ${error?.message ?? event.message ?? error}\n${error?.stack ?? ""}`;
+			};
+			window.addEventListener("error", fail("运行出错"));
+			window.addEventListener("unhandledrejection", fail("未处理的 Promise 异常"));
+			import("./bench.js").catch((error) => {
+				logEl.textContent = `模块加载失败: ${error?.message ?? error?.stack ?? error}`;
+			});
+		</script>
+	</body>
+</html>
