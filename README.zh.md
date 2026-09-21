@@ -19,12 +19,8 @@
 
 下面这张图记录了我当时遇到的渲染差异：每组左侧是软件内预览，右侧是当时导出的 PDF。渐变、阴影和部分图形在导出后发生了变化。
 
-<details>
-<summary>查看阅读视图与 PDF 的渲染对比</summary>
-
 ![阅读视图与当时导出的 PDF 对比，展示渐变文字、阴影和图形等渲染差异](docs/images/render-comparison.png)
 
-</details>
 
 ## 工作原理
 
