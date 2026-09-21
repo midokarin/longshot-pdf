@@ -19,12 +19,8 @@ I built this plugin to keep exported notes as close as possible to their reading
 
 The image below shows the rendering differences I encountered. Each pair shows the in-app preview on the left and the PDF I exported at the time on the right. Gradients, shadows and some graphics changed during export.
 
-<details>
-<summary>View the reading-view and PDF comparison</summary>
-
 ![Comparison of the in-app preview and the earlier PDF export, showing changes to gradients, shadows and graphics](docs/images/render-comparison.png)
 
-</details>
 
 ## How it works
 
