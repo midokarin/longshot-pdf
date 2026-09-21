@@ -1,5 +1,6 @@
 name: Build and publish plugin
 on:
+  workflow_dispatch:
   push:
     tags:
       - '*'
