@@ -2,10 +2,7 @@
 
 简体中文 | [English](README.md)
 
-<picture>
-  <source srcset="docs/images/download.jpg" type="image/jpeg">
-  <img src="docs/images/logo.png" alt="Longshot PDF 标志" width="340">
-</picture>
+<img src="https://raw.githubusercontent.com/midokarin/longshot-pdf/main/docs/images/download.jpg" alt="Longshot PDF 标志" width="340">
 
 把 Obsidian 笔记截成长图，导出为 PDF、JPG 或 PNG。可以自动分页，也可以保存整篇长图。
 
@@ -82,7 +79,7 @@ Markdown 笔记 → 阅读视图渲染 → 长截图 → 分页或保留整图 �
 
 文件默认保存在当前笔记所在文件夹。设置会自动保存，下次导出不必重新填写。
 
-<img src="docs/images/quick-settings.jpg" alt="快速设置页：选择长截图和 PDF 格式，设置水印与输出位置" width="620">
+<img src="https://raw.githubusercontent.com/midokarin/longshot-pdf/main/docs/images/quick-settings.jpg" alt="快速设置页：选择长截图和 PDF 格式，设置水印与输出位置" width="620">
 
 ### 详细设置页
 

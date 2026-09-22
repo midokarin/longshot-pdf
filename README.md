@@ -2,10 +2,7 @@
 
 [简体中文](README.zh.md) | English
 
-<picture>
-  <source srcset="docs/images/download.jpg" type="image/jpeg">
-  <img src="docs/images/logo.png" alt="Longshot PDF logo" width="340">
-</picture>
+<img src="https://raw.githubusercontent.com/midokarin/longshot-pdf/main/docs/images/download.jpg" alt="Longshot PDF logo" width="340">
 
 Capture your Obsidian notes as long screenshots and export them as PDF, JPG or PNG. Split the result into pages, or keep the whole note in one image.
 
@@ -82,7 +79,7 @@ Open a Markdown note and click the camera icon in Obsidian’s left ribbon.
 
 Files are saved next to the current note by default. Settings are saved automatically for the next export.
 
-<img src="docs/images/quick-settings.jpg" alt="Quick settings in Chinese: long screenshot and PDF selected, with watermark switches and output folder" width="620">
+<img src="https://raw.githubusercontent.com/midokarin/longshot-pdf/main/docs/images/quick-settings.jpg" alt="Quick settings in Chinese: long screenshot and PDF selected, with watermark switches and output folder" width="620">
 
 ### Detailed settings
 
