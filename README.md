@@ -3,7 +3,7 @@
 [简体中文](README.zh.md) | English
 
 <picture>
-  <source srcset="docs/images/logo-horizontal.svg" type="image/svg+xml">
+  <source srcset="docs/images/download.jpg" type="image/jpeg">
   <img src="docs/images/logo.png" alt="Longshot PDF logo" width="340">
 </picture>
 
