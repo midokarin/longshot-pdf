@@ -23,7 +23,7 @@ For the browser regression suite, build with `npm run harness`, serve the reposi
 
 ## Releases
 
-Push a tag matching `manifest.json` (for example, `0.2.2`). The release workflow builds twice to check reproducibility, performs static checks, generates provenance attestations, and publishes only the three Obsidian installation files. The workflow pins third-party Actions to commit SHAs. Historic releases are left unchanged.
+Push a tag matching `manifest.json` (for example, `0.2.3`). The release workflow builds twice to check reproducibility, performs static checks, generates provenance attestations, and publishes only the three Obsidian installation files. The workflow pins third-party Actions to commit SHAs. Historic releases are left unchanged.
 
 Verify a downloaded file with GitHub CLI:
 

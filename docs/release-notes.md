@@ -1,14 +1,7 @@
-Fix plugin review issues without changing PDF export behavior:
+Longshot PDF 0.2.3 updates the logo image in the English and Chinese README files. The plugin's export behavior is unchanged from 0.2.2.
 
-- Add the MIT license and explain local file access in both READMEs.
-- Remove jsPDF's unused CDN-based viewer from the production bundle.
-- Read only the selected PNG for hidden watermark verification instead of listing the vault.
-- Replace the `builtin-modules` dependency with Node.js's built-in module list.
-- Remove CSS `!important` overrides and unsupported scrollbar styling.
-- Build releases in GitHub Actions with provenance attestations. Attach only the three Obsidian installation files.
+The GitHub Actions release includes `main.js`, `manifest.json`, and `styles.css`, with build provenance attestations. Replace these three files to update an existing installation, then reload the plugin.
 
-Direct filesystem access remains available for exporting outside the vault and using local watermark/avatar images. Reload the plugin after updating.
+Longshot PDF 0.2.3 更新了中英文 README 中的标志图片。插件导出行为与 0.2.2 相同。
 
-修复审核报告中的脚本创建、样式兼容性和依赖问题，补充 MIT 许可证及中英文文件访问说明。隐水印校验改为仅读取选中的 PNG。发布文件由 GitHub Actions 构建并附带来源证明。
-
-保留库外导出和本机图片读取功能，因此直接文件系统访问的行为提示仍可能出现。更新后请重新加载插件。
+此版本由 GitHub Actions 构建，附带 `main.js`、`manifest.json`、`styles.css` 和构建来源证明。更新已有安装时替换这三个文件，再重新加载插件。
