@@ -21,9 +21,11 @@ The upstream jsPDF 4.2.1 browser bundle includes an optional `pdfobjectnewwindow
 
 For the browser regression suite, build with `npm run harness`, serve the repository on port 8777, and run `npm run verify` and `npm run verify:i18n`. The current browser launchers use the Chromium cache on macOS. `node dev/verify-long-pdf.mjs` verifies actual PDF image placement and margins. These tests use Obsidian stubs, not the native Obsidian application.
 
+`npm run verify:inline-title` checks offscreen title rendering and captured pixels against a reading-view reference, including inherited colors on dark notes, custom title typography, theme overrides and title inclusion. It bundles the production renderer with a small Obsidian stub and does not need the HTTP server. Set `CHROMIUM_PATH` if Chromium is not in the Playwright cache. Use `npm run verify:inline-title -- --baseline=0.2.4` to run against the 0.2.4 stylesheet and reproduce the regression (expected to fail).
+
 ## Releases
 
-Push a tag matching `manifest.json` (for example, `0.2.4`). The release workflow builds twice to check reproducibility, performs static checks, generates provenance attestations, and publishes only the three Obsidian installation files. The workflow pins third-party Actions to commit SHAs. Historic releases are left unchanged.
+Push a tag matching `manifest.json` (for example, `0.2.5`). The release workflow builds twice to check reproducibility, performs static checks, generates provenance attestations, and publishes only the three Obsidian installation files. The workflow pins third-party Actions to commit SHAs. Historic releases are left unchanged.
 
 Verify a downloaded file with GitHub CLI:
 

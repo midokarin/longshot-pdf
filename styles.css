@@ -34,15 +34,9 @@
 	margin-right: 0;
 }
 
-/* 笔记标题：主题若把内联标题隐藏了，这里强制显示，并沿用主题的排版变量 */
+/* 包含标题时保持可见；颜色与排版交给 Obsidian、主题和笔记 CSS，避免覆盖它们的样式。 */
 .longshot-offscreen .markdown-preview-view.show-inline-title .inline-title {
 	display: block;
-	font-size: var(--inline-title-size, 1.8em);
-	font-weight: var(--inline-title-weight, 700);
-	font-style: var(--inline-title-style, normal);
-	line-height: var(--inline-title-line-height, 1.5);
-	margin-bottom: var(--inline-title-margin-bottom, 0.5em);
-	color: var(--inline-title-color, var(--text-normal));
 }
 
 /*
